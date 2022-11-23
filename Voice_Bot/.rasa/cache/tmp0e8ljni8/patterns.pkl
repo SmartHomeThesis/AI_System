@@ -1,0 +1,14 @@
+[
+  {
+    "name": "place",
+    "pattern": "(\\bViệt\\ Nam\\b|\\bLondon\\b)"
+  },
+  {
+    "name": "command",
+    "pattern": "(\\btắt\\b|\\bmở\\b|\\bbật\\b)"
+  },
+  {
+    "name": "device",
+    "pattern": "(\\bđèn\\b|\\bquạt\\b)"
+  }
+]

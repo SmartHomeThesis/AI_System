@@ -1,0 +1,138 @@
+version: "3.1"
+
+nlu:
+- intent: inquire_time
+  examples: |
+    - bây giờ là mấy giờ?
+    - [Việt Nam](place) bây giờ là mấy giờ?
+    - [London](place) bây giờ là mấy giờ?
+
+- lookup: place
+  examples: |
+    - Việt Nam
+    - London
+
+- intent: control_device
+  examples: |
+    - [tắt](command) [đèn](device)
+    - [mở](command) [đèn](device)
+    - [bật](command) [đèn](device)
+    - [tắt](command) [quạt](device) 
+    - [mở](command) [quạt](device)
+    - [bật](command) [quạt](device)
+
+- lookup: command
+  examples: |
+    - tắt 
+    - mở 
+    - bật
+
+- lookup: device
+  examples: |
+    - đèn
+    - quạt
+
+- intent: greet
+  examples: |
+    - chào
+    - xin chào
+    - chào anh
+    - chào chị
+    - chào bạn
+    - chào buổi sáng
+    - chào buổi tối
+    - chào buổi chiều
+    - chào em
+    - chào đằng ấy
+    - hey
+    - hello
+    - hi
+    - hello there
+    - good morning
+    - good evening
+    - moin
+    - hey there
+    - let's go
+    - hey dude
+    - goodmorning
+    - goodevening
+    - good afternoon
+
+- intent: goodbye
+  examples: |
+    - gặp lại sau
+    - tạm biệt
+    - chào tạm biệt
+    - hẹn gặp lại
+    - lúc khác gặp lại
+    - về đây
+    - cu
+    - good by
+    - cee you later
+    - good night
+    - bye
+    - goodbye
+    - have a nice day
+    - see you around
+    - bye bye
+    - see you later
+
+- intent: affirm
+  examples: |
+    - yes
+    - y
+    - indeed
+    - of course
+    - that sounds good
+    - correct
+
+- intent: deny
+  examples: |
+    - no
+    - n
+    - never
+    - I don't think so
+    - don't like that
+    - no way
+    - not really
+
+- intent: mood_great
+  examples: |
+    - perfect
+    - great
+    - amazing
+    - feeling like a king
+    - wonderful
+    - I am feeling very good
+    - I am great
+    - I am amazing
+    - I am going to save the world
+    - super stoked
+    - extremely good
+    - so so perfect
+    - so good
+    - so perfect
+
+- intent: mood_unhappy
+  examples: |
+    - my day was horrible
+    - I am sad
+    - I don't feel very well
+    - I am disappointed
+    - super sad
+    - I'm so sad
+    - sad
+    - very sad
+    - unhappy
+    - not good
+    - not very good
+    - extremly sad
+    - so saad
+    - so sad
+
+- intent: bot_challenge
+  examples: |
+    - are you a bot?
+    - are you a human?
+    - am I talking to a bot?
+    - am I talking to a human?
