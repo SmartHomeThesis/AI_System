@@ -5,7 +5,6 @@ import numpy as np
 import math
 
 
-# Helper
 def face_confidence(face_distance, face_match_threshold=0.6):
     range = (1.0 - face_match_threshold)
     linear_val = (1.0 - face_distance) / (range * 2.0)
@@ -62,7 +61,7 @@ class FaceRecognition:
                 for face_encoding in self.face_encodings:
                     # See if the face is a match for the known face(s)
                     matches = face_recognition.compare_faces(self.known_face_encodings, face_encoding)
-                    name = "Unknown"
+                    name = 'Unknown'
                     confidence = '???'
 
                     # Calculate the shortest distance to face
