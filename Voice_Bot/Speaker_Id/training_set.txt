@@ -3,3 +3,8 @@ Hanh-sample1.wav
 Hanh-sample2.wav
 Hanh-sample3.wav
 Hanh-sample4.wav
+Nam-sample0.wav
+Nam-sample1.wav
+Nam-sample2.wav
+Nam-sample3.wav
+Nam-sample4.wav
