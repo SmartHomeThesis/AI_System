@@ -166,6 +166,7 @@ def test_model(fileName):
     log_likelihood = np.zeros(len(models)) 
     
     for i in range(len(models)):
+        print(len(models))
         gmm = models[i]  # checking with each model one by one
         scores = np.array(gmm.score(vector))
         log_likelihood[i] = scores.sum()

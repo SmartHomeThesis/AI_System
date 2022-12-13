@@ -20,6 +20,7 @@ print("Bot says: " + f"{bot_message}")
 myobj = gTTS(bot_message, lang="vi")
 myobj.save("bot.mp3")
 playsound.playsound("bot.mp3")
+os.remove("bot.mp3")
 
 
 while bot_message != "Bye":
@@ -64,4 +65,4 @@ while bot_message != "Bye":
     
     os.remove("bot.mp3")
     os.remove("user.mp3")
-    os.remove("user.wave")
+    os.remove("user.wav")
