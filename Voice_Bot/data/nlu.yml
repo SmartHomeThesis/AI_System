@@ -3,23 +3,25 @@ version: "3.1"
 nlu:
 - intent: inquire_time
   examples: |
-    - bây giờ là mấy giờ?
+    - Bây giờ là mấy giờ?
     - [Việt Nam](place) bây giờ là mấy giờ?
     - [London](place) bây giờ là mấy giờ?
-
-- lookup: place
-  examples: |
-    - Việt Nam
-    - London
+    - [New York](place) bây giờ là mấy giờ?
 
 - intent: control_device
   examples: |
     - [tắt](command) [đèn](device)
     - [mở](command) [đèn](device)
     - [bật](command) [đèn](device)
-    - [tắt](command) [quạt](device) 
-    - [mở](command) [quạt](device)
-    - [bật](command) [quạt](device)
+    - [tắt](command) [cửa](device) 
+    - [mở](command) [cửa](device)
+    - [bật](command) [cửa](device)
+
+- lookup: place
+  examples: |
+    - Việt Nam
+    - London
+    - New York
 
 - lookup: command
   examples: |
@@ -30,7 +32,7 @@ nlu:
 - lookup: device
   examples: |
     - đèn
-    - quạt
+    - cửa
 
 - intent: greet
   examples: |

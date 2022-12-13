@@ -6,19 +6,9 @@ from rasa_sdk.events import SlotSet
 from rasa_sdk.executor import CollectingDispatcher
 
 city_db = {
+    'Việt Nam': 'Asia/Hanoi',
     'London': 'Europe/London',
-    'Việt Nam': 'Asia/Hanoi'
-}
-
-command_db = {
-    'tắt': 0,
-    'mở': 1,
-    'bật': 2
-}
-
-device_db = {
-    'đèn': 0,
-    'quạt': 1  
+    'New York': 'US/Central'
 }
 
 
@@ -49,23 +39,24 @@ class ActionTellTime(Action):
         
         return []
 
+# def helper(device, command):
+#         if device == "đèn":
+#             if command == "tắt":
+#                 setDevice1(False)
+#             else:
+#                 setDevice1(True)    
+#         else:
+#             if command == "tắt":
+#                 setDevice2(False)
+#             else:
+#                 setDevice2(True) 
 
 class ActionControlDevice(Action):
 
     def name(self) -> Text:
         return "action_control_device"
 
-    # def helper(device, command):
-    #     if device == "quạt":
-    #         if command == "tắt":
-    #             setDevice1(False)
-    #         else:
-    #             setDevice1(True)    
-    #     else:
-    #         if command == "tắt":
-    #             setDevice2(False)
-    #         else:
-    #             setDevice2(True)         
+            
     
     def run(self, dispatcher: CollectingDispatcher, 
             tracker: Tracker, 
@@ -82,6 +73,7 @@ class ActionControlDevice(Action):
         if current_command != None:        
             msg = f"{current_device} đã được {current_command}."
             dispatcher.utter_message(text=msg)
+            # helper(current_device, current_command)
             return [] 
         else:
             msg = f"Bạn muốn bật hay tắt {current_device}?"
