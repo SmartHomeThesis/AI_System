@@ -36,7 +36,7 @@ while bot_message != "Bye":
             myobj = gTTS(user_message, lang="vi") 
             myobj.save("user.mp3")
             sound = AudioSegment.from_mp3("user.mp3")
-            sound.export("user.wav", format="wav")  
+            sound.export("user.wav", format="wav")
 
             print(test_model("user.wav") + " said: {} ".format(user_message))
 
@@ -63,5 +63,4 @@ while bot_message != "Bye":
     
     
     os.remove("bot.mp3")
-    os.remove("user.mp3")
-    os.remove("user.wave")
+    os.remove("user.wav")

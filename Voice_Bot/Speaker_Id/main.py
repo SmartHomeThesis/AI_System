@@ -57,9 +57,9 @@ def record_audio():
         CHANNELS = 1
         RATE = 44100
         CHUNK = 512
-        RECORD_SECONDS = 10
+        RECORD_SECONDS = 5
         audio = pyaudio.PyAudio()		
-        stream = audio.open(format=FORMAT, channels=CHANNELS, rate=RATE, input=True, input_device_index = 1, frames_per_buffer=CHUNK)
+        stream = audio.open(format=FORMAT, channels=CHANNELS, rate=RATE, input=True, input_device_index = 7, frames_per_buffer=CHUNK)
 
         print("----------------------Recording---------------------")
         Recordframes = []
@@ -176,16 +176,13 @@ def test_model(fileName):
   
 
 # while True:
-#     test_model("testingData/sample.wav")
-#     # choice = int(input("\n 1.Record audio for training \n 2.Train Model \n 3.Record audio for testing \n 4.Test Model\n"))
-
-#     # if choice == 1:
-#     #     record_audio()
-#     # elif choice == 2:
-#     #     train_model(path=path)
-#     # elif choice == 3:
-#     #     record_audio_test()
-#     # elif choice == 4:
-#     #     test_model()
-#     # else:
-#     #     exit()
+#     choice = int(input("\n 1.Record audio for training \n 2.Train Model \n 3.Record audio for testing \n 4.Test Model\n"))
+#
+#     if choice == 1:
+#         record_audio()
+#     elif choice == 2:
+#         train_model(path=path)
+#     elif choice == 3:
+#         record_audio_test()
+#     else:
+#         exit()
