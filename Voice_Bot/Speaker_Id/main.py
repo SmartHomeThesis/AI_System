@@ -16,7 +16,7 @@ path = os.path.abspath("")
 def calculate_delta(array):
    
     rows, cols = array.shape
-    deltas = np.zeros((rows,20))
+    deltas = np.zeros((rows, 20))
     N = 2
 
     for i in range(rows):
@@ -34,10 +34,10 @@ def calculate_delta(array):
             else:
                 second = i+j
 
-            index.append((second,first))
+            index.append((second, first))
             j+=1
 
-        deltas[i] = ( array[index[0][0]]-array[index[0][1]] + (2 * (array[index[1][0]]-array[index[1][1]])) ) / 10
+        deltas[i] = (array[index[0][0]]-array[index[0][1]] + (2 * (array[index[1][0]]-array[index[1][1]]))) / 10
 
     return deltas
 
@@ -84,40 +84,9 @@ def record_audio():
         waveFile.setframerate(RATE)
         waveFile.writeframes(b''.join(Recordframes))
 
-    waveFile.close()    
+        waveFile.close()    
 
-def record_audio_test():
-    FORMAT = pyaudio.paInt16
-    CHANNELS = 1
-    RATE = 44100
-    CHUNK = 512
-    RECORD_SECONDS = 10
-    audio = pyaudio.PyAudio()		
-    stream = audio.open(format=FORMAT, channels=CHANNELS, rate=RATE, input=True, input_device_index = 1, frames_per_buffer=CHUNK)
-
-    print("----------------------Recording---------------------")
-    Recordframes = []
-    for i in range(0, int(RATE / CHUNK * RECORD_SECONDS)):
-        data = stream.read(CHUNK)
-        Recordframes.append(data)
-    print("----------------------Recording Stopped---------------------")
-
-    stream.stop_stream()
-    stream.close()
-    audio.terminate()
-
-    OUTPUT_FILENAME = "sample.wav"
-    WAVE_OUTPUT_FILENAME = os.path.join("testingData", OUTPUT_FILENAME)
-    trainedfilelist = open("testing_set.txt", 'a')
-    trainedfilelist.write(OUTPUT_FILENAME+"\n")
-    waveFile = wave.open(WAVE_OUTPUT_FILENAME, 'wb')
-    waveFile.setnchannels(CHANNELS)
-    waveFile.setsampwidth(audio.get_sample_size(FORMAT))
-    waveFile.setframerate(RATE)
-    waveFile.writeframes(b''.join(Recordframes))
-    waveFile.close()
-
-def train_model(path):
+def train_model():
     src = "trainingData/"
     dest = "models/"
     train_file = "training_set.txt"    
@@ -125,9 +94,11 @@ def train_model(path):
 
     count = 1
     features = np.asarray(())
+
     for path in file_paths:    
         path = path.strip()   
         sr, audio = read(src + path)
+
         vector = extract_features(audio, sr)
         
         if features.size == 0:
@@ -140,18 +111,15 @@ def train_model(path):
             gmm.fit(features)
             
             # dumping the trained gaussian model
-            picklefile = path.split("-")[0]+".gmm"
-            pickle.dump(gmm,open(dest + picklefile,'wb'))
-            print('+ modeling completed for speaker:', picklefile, " with data point = ", features.shape)   
+            picklefile = path.split("-")[0] + ".gmm"
+            pickle.dump(gmm, open(dest + picklefile,'wb'))
+            print("Modelling completed for speaker: ", picklefile, " with data point = ", features.shape)   
             features = np.asarray(())
             count = 0
         count = count + 1
 
 def test_model(fileName):
-    src = "testingData/"
     dest = "models/"
-    test_file = "testing_set.txt"      
-    file_paths = open(test_file,'r')
      
     gmm_files = [os.path.join(dest, fname) for fname in os.listdir(dest) if fname.endswith('.gmm')]
      
@@ -166,8 +134,7 @@ def test_model(fileName):
     log_likelihood = np.zeros(len(models)) 
     
     for i in range(len(models)):
-        print(len(models))
-        gmm = models[i]  # checking with each model one by one
+        gmm = models[i] 
         scores = np.array(gmm.score(vector))
         log_likelihood[i] = scores.sum()
         
@@ -176,6 +143,7 @@ def test_model(fileName):
     return winner_name
   
 
+train_model()
 # while True:
 #     choice = int(input("\n 1.Record audio for training \n 2.Train Model \n 3.Record audio for testing \n 4.Test Model\n"))
 #
