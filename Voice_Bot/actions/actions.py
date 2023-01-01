@@ -1,14 +1,14 @@
-from typing import Any, Text, Dict, List, Union
+from typing import Any, Text, Dict, List
 
 import arrow
 from rasa_sdk import Action, Tracker
-from rasa_sdk.events import SlotSet
 from rasa_sdk.executor import CollectingDispatcher
 
+
 city_db = {
-    'Việt Nam': 'Asia/Hanoi',
-    'London': 'Europe/London',
-    'New York': 'US/Central'
+    'việt nam': 'Asia/Hanoi',
+    'london': 'Europe/London',
+    'new york': 'US/Central'
 }
 
 
@@ -39,49 +39,33 @@ class ActionTellTime(Action):
         
         return []
 
-# def helper(device, command):
-#         if device == "đèn":
-#             if command == "tắt":
-#                 setDevice1(False)
-#             else:
-#                 setDevice1(True)    
-#         else:
-#             if command == "tắt":
-#                 setDevice2(False)
-#             else:
-#                 setDevice2(True) 
-
 class ActionControlDevice(Action):
 
     def name(self) -> Text:
         return "action_control_device"
 
-            
-    
     def run(self, dispatcher: CollectingDispatcher, 
             tracker: Tracker, 
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
 
-        current_command = next(tracker.get_latest_entity_values("command"), None)
-        current_device = next(tracker.get_latest_entity_values("device"), None)
+        command = next(tracker.get_latest_entity_values("command"), None)
+        device = next(tracker.get_latest_entity_values("device"), None)
         
-        if not current_device:
+        if not device:
             msg = f"Bạn muốn thao tác với thiết bị gì?"
             dispatcher.utter_message(text=msg)
             return []
                 
-        if current_command != None:        
-            msg = f"{current_device} đã được {current_command}."
+        if command != None:        
+            msg = f"{device} đã được {command}. False"
             dispatcher.utter_message(text=msg)
             # helper(current_device, current_command)
             return [] 
         else:
-            msg = f"Bạn muốn bật hay tắt {current_device}?"
-            dispatcher.utter_message(text=msg)
+            msg = f"Bạn muốn bật hay tắt {device}?"
+            dispatcher.utter_message(text={"msg": msg, "is_sound": False})
             return [] 
   
-
-
 class ActionHelloWorld(Action):
 
     def name(self) -> Text:
