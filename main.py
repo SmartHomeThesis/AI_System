@@ -23,12 +23,15 @@ config = dotenv_values('./.env')
 AIO_USERNAME = config.get('USERNAME')
 AIO_KEY = config.get('API_KEY')
 
+
 def connected(client):
     for feed in AIO_FEED_DEVICE:
         client.subscribe(feed)
 
+
 def disconnected(client):
     sys.exit(1)
+
 
 def message(client, feed_id, payload):  
     if feed_id == "smart-home.door":
@@ -38,6 +41,7 @@ def message(client, feed_id, payload):
             isDoor = True
         else:
             isDoor = False
+
 
 client = MQTTClient(AIO_USERNAME, AIO_KEY)
 client.on_connect = connected
@@ -51,6 +55,16 @@ client.loop_background()
 portName = getPort()
 if portName != "None":
     ser = serial.Serial(port=portName, baudrate=9600)
+
+def countdown(t):
+
+    while t:
+        mins, secs = divmod(t, 60)
+        timer = '{:02d}:{:02d}'.format(mins, secs)
+        print(timer, end="\r")
+        time.sleep(1)
+        t -= 1
+
 
 fr = FaceRecognition()
 
@@ -67,6 +81,14 @@ if user_choice == 1:
         client.publish("smart-home.face-recognition", name)   
         run_voice_bot()
 elif user_choice == 2:
+    # Voice flow 
+    print("*************************************************************************")
+    print("* The system will record your voice 5 times, 5 seconds each time. Recording will take place later")
+    countdown(3)
+    print("*************************************************************************")
+    # 1. Record user voice (5 samples)
+    speaker_verification.record_sample() 
+    # Train model (voice)
     speaker_verification.train_model()
 else:   
     exit()

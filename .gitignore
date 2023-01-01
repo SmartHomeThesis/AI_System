@@ -1,8 +1,9 @@
-/Makefile
 voice_bot/.rasa
+training_set.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
+.vscode/
 *.py[cod]
 *$py.class
 

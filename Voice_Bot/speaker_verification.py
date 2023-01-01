@@ -55,18 +55,18 @@ def record_sample():
         stream = audio.open(format=FORMAT, channels=CHANNELS, rate=RATE, input=True, output=True, frames_per_buffer=CHUNK)
 
         Recordframes = []
-        print("----------------------Recording---------------------")
+        print("----------------------Recording " + f"{count+1}---------------------")
         for i in range(0, int(RATE / CHUNK * RECORD_SECONDS)):
             data = stream.read(CHUNK)
             Recordframes.append(data)
-        print("----------------------Recording Stopped---------------------")
+        print("--------------------------Recording Stopped-------------------------")
 
         stream.stop_stream()
         stream.close()
         audio.terminate()
 
         OUTPUT_FILENAME = Name + "-sample" + str(count) + ".wav"
-        WAVE_OUTPUT_FILENAME = os.path.join("training_data", OUTPUT_FILENAME)
+        WAVE_OUTPUT_FILENAME = os.path.join("training_data/voice", OUTPUT_FILENAME)
 
         trainedfilelist = open("training_set.txt", 'a')
         trainedfilelist.write(OUTPUT_FILENAME + "\n")
@@ -80,9 +80,9 @@ def record_sample():
         waveFile.close()    
 
 def train_model():
-    src = "voice_bot/training_data/"
-    dest = "voice_bot/models/"
-    train_file = "voice_bot/training_set.txt"    
+    src = "training_data/voice/"
+    dest = "models/"
+    train_file = "training_set.txt"    
     file_paths = open(train_file, 'r')
 
     count = 1
@@ -113,7 +113,7 @@ def train_model():
         count = count + 1
 
 def test_model(file_name):
-    src = "voice_bot/models/"
+    src = "models/"
      
     gmm_files = [os.path.join(src, fname) for fname in os.listdir(src) if fname.endswith('.gmm')]
      

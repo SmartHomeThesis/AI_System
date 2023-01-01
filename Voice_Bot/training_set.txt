@@ -1,5 +1,0 @@
-Hanh-sample0.wav
-Hanh-sample1.wav
-Hanh-sample2.wav
-Hanh-sample3.wav
-Hanh-sample4.wav
