@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="f4b7eb7a-179b-4a6f-b924-05c5b996c7ef" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/authenticate.py" beforeDir="false" afterPath="$PROJECT_DIR$/authenticate.py" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="2IXpueDBmFXFxKp7jiNODVdH9Xa" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/pop_os_hi/WorksSpace/webcam_face_recognition&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/Voice_Bot/models" />
+      <recent name="$PROJECT_DIR$/Face_Recognition" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/Face_Recognition" />
+      <recent name="$PROJECT_DIR$/data/faces/Hanh" />
+      <recent name="$PROJECT_DIR$/data/faces/Nam" />
+      <recent name="$PROJECT_DIR$/data/faces/Elon" />
+    </key>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="f4b7eb7a-179b-4a6f-b924-05c5b996c7ef" name="Changes" comment="" />
+      <created>1670338007282</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1670338007282</updated>
+      <workItem from="1670338012245" duration="30000" />
+      <workItem from="1670338073152" duration="1517000" />
+      <workItem from="1670341940121" duration="6089000" />
+      <workItem from="1670807234337" duration="4274000" />
+      <workItem from="1670853256537" duration="241000" />
+      <workItem from="1670853991381" duration="11474000" />
+      <workItem from="1670897690566" duration="9566000" />
+      <workItem from="1670910990534" duration="723000" />
+      <workItem from="1670918150469" duration="9000" />
+      <workItem from="1670918171649" duration="18000" />
+      <workItem from="1671088517987" duration="5971000" />
+      <workItem from="1671202554411" duration="661000" />
+      <workItem from="1671270967664" duration="11000" />
+      <workItem from="1672648268909" duration="5576000" />
+      <workItem from="1672663450373" duration="2293000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>
