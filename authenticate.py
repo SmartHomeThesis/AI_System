@@ -63,26 +63,6 @@ class FaceRecognition:
             if not ret:
                 print("failed to grab frame")
                 break
-            # small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
-            #
-            # # Convert the image from BGR color (which OpenCV uses) to RGB color (which face_recognition uses)
-            # rgb_small_frame = small_frame[:, :, ::-1]
-            #
-            # # Find all the faces and face encodings in the current frame of video
-            # self.face_locations = face_recognition.face_locations(rgb_small_frame)
-            # for (top, right, bottom, left) in zip(self.face_locations):
-            #     print(top, right, bottom, left)
-            #     # Scale back up face locations since the frame we detected in was scaled to 1/4 size
-            #     top *= 4
-            #     right *= 4
-            #     bottom *= 4
-            #     left *= 4
-            #
-            #     # Create the frame with the name
-            #     cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
-            #     cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 0, 255), cv2.FILLED)
-            #
-            #     # Display the resulting image
             gray= cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             faces = faceCascade.detectMultiScale(
                 gray,
@@ -94,9 +74,8 @@ class FaceRecognition:
                 cv2.rectangle(frame, (x, y), (x + w, y + h), (0,255,0), 2)
             cv2.imshow("press space to take a photo", frame)
             k = cv2.waitKey(1)
-            if k % 256 == 27:
-                # ESC pressed
-                print("Escape hit, closing...")
+            if k == ord('q'):
+                print("Closing collecting data ................")
                 break
             elif k % 256 == 32:
                 # SPACE pressed
@@ -108,7 +87,6 @@ class FaceRecognition:
                     break
 
         cam.release()
-
         cv2.destroyAllWindows()
 
     def train_model(self):
@@ -212,6 +190,7 @@ class FaceRecognition:
 
             # Hit 'q' on the keyboard to quit!
             if cv2.waitKey(1) == ord('q'):
+                print("Closing recognition ................")
                 break
 
         # Release handle to the webcam
@@ -224,9 +203,9 @@ while True:
     choice = int(input("\n 1. Take picture for trainning \n 2. Train Model \n 3. Face Recognition \n 4. Exit\n"))
     if choice == 1:
         fr.take_picture()
-    if choice == 2:
+    elif choice == 2:
         fr.train_model()
-    if choice == 3:
+    elif choice == 3:
         fr.run_recognition()
     else:
         exit()
