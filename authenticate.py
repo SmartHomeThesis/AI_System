@@ -42,16 +42,21 @@ class FaceRecognition:
         print("Welcome to face recognition system")
 
     def take_picture(self):
-        name = input("Enter your name: ")
-
+        flag = True
+        faceCascade = cv2.CascadeClassifier('models/haarcascade_frontalface_default.xml')
+        while flag:
+            name = input("Enter your name: ")
+            # Create folder to  save images from user input
+            if not os.path.exists('data/faces/' + name):
+                os.mkdir('data/faces/' + name)
+                flag=False
+            else:
+                print("Name already exists. Please try again ................")
         cam = cv2.VideoCapture(0)
-
-        cv2.namedWindow("press space to take a photo", cv2.WINDOW_NORMAL)
-        cv2.resizeWindow("press space to take a photo", 500, 300)
-
         img_counter = 0
-        # Create folder to  save images from user input
-        os.mkdir('data/faces/' + name)
+        cv2.namedWindow("press space to take a photo", cv2.WINDOW_NORMAL)
+        cam.set(3,640)
+        cam.set(4,480)
 
         while True:
             ret, frame = cam.read()
@@ -62,7 +67,7 @@ class FaceRecognition:
             #
             # # Convert the image from BGR color (which OpenCV uses) to RGB color (which face_recognition uses)
             # rgb_small_frame = small_frame[:, :, ::-1]
-
+            #
             # # Find all the faces and face encodings in the current frame of video
             # self.face_locations = face_recognition.face_locations(rgb_small_frame)
             # for (top, right, bottom, left) in zip(self.face_locations):
@@ -76,8 +81,17 @@ class FaceRecognition:
             #     # Create the frame with the name
             #     cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
             #     cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 0, 255), cv2.FILLED)
-
-                # Display the resulting image
+            #
+            #     # Display the resulting image
+            gray= cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            faces = faceCascade.detectMultiScale(
+                gray,
+                scaleFactor=1.3,
+                minNeighbors=5,
+                minSize=(20, 20)
+            )
+            for (x, y, w, h) in faces:
+                cv2.rectangle(frame, (x, y), (x + w, y + h), (0,255,0), 2)
             cv2.imshow("press space to take a photo", frame)
             k = cv2.waitKey(1)
             if k % 256 == 27:
@@ -191,10 +205,10 @@ class FaceRecognition:
             cv2.imshow('Face Recognition', frame)
 
             # Authenticate successfully
-            if self.cnt == 5:
-                video_capture.release()
-                cv2.destroyAllWindows()
-                return True, name[:name.index(".")].upper()
+            # if self.cnt == 5:
+            #     video_capture.release()
+            #     cv2.destroyAllWindows()
+            #     return True, name[:name.index(".")].upper()
 
             # Hit 'q' on the keyboard to quit!
             if cv2.waitKey(1) == ord('q'):
