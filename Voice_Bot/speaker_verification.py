@@ -116,6 +116,7 @@ def test_model(file_name):
     src = "models/"
      
     gmm_files = [os.path.join(src, fname) for fname in os.listdir(src) if fname.endswith('.gmm')]
+    print(gmm_files)
      
     # load the Gaussian gender Models
     models = [pickle.load(open(fname, 'rb')) for fname in gmm_files]
@@ -133,5 +134,6 @@ def test_model(file_name):
         log_likelihood[i] = scores.sum()
         
     winner = np.argmax(log_likelihood)
-    winner_name = speakers[winner][17:]
+    print(speakers[0])
+    winner_name = speakers[winner][7:]
     return winner_name

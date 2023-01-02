@@ -84,7 +84,7 @@ elif user_choice == 2:
     # Voice flow 
     print("*************************************************************************")
     print("* The system will record your voice 5 times, 5 seconds each time. Recording will take place later")
-    countdown(3)
+    countdown(5)
     print("*************************************************************************")
     # 1. Record user voice (5 samples)
     speaker_verification.record_sample() 
@@ -92,3 +92,4 @@ elif user_choice == 2:
     speaker_verification.train_model()
 else:   
     exit()
+
