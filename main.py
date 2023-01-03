@@ -68,28 +68,38 @@ def countdown(t):
 
 fr = FaceRecognition()
 
-print("*************************************************************************")
-print("*             Welcome to our system. Plese select user type             *")
-print("* 1. Already have acount                                                *")
-print("* 2. New user                                                           *")
-print("*************************************************************************")
-user_choice = int(input())
+while True:
 
-if user_choice == 1:
-    authentication, name = fr.run_recognition()
-    if authentication == True:
-        client.publish("smart-home.face-recognition", name)   
-        run_voice_bot()
-elif user_choice == 2:
-    # Voice flow 
     print("*************************************************************************")
-    print("* The system will record your voice 5 times, 5 seconds each time. Recording will take place later")
-    countdown(5)
+    print("*             Welcome to our system. Plese select user type             *")
+    print("* 1. Already have acount                                                *")
+    print("* 2. New user                                                           *")
     print("*************************************************************************")
-    # 1. Record user voice (5 samples)
-    speaker_verification.record_sample() 
-    # Train model (voice)
-    speaker_verification.train_model()
-else:   
-    exit()
+    user_choice = int(input())
+
+    if user_choice == 1:
+        authentication, name = fr.run_recognition()
+        if authentication == True:
+            client.publish("smart-home.face-recognition", name)   
+            run_voice_bot()
+    elif user_choice == 2:
+        name = input("Enter your name: ")
+
+        # Face flow
+        print("*************************************************************************")
+        print("************* Take 5 pictures to train model (Press Space) **************")
+        print("*************************************************************************")
+        countdown(5)
+        fr.take_picture(name)
+        fr.train_model()
+
+        # Voice flow 
+        print("*************************************************************************")
+        print("************ Record your voice 5 times (5 seconds each time) ************")
+        print("*************************************************************************")
+        countdown(5)
+        speaker_verification.record_sample(name) 
+        speaker_verification.train_model()
+    else:   
+        exit()
 

@@ -43,8 +43,7 @@ def extract_features(audio, rate):
 
     return combined
 
-def record_sample():
-    Name = (input("Please enter your name: "))
+def record_sample(name):
     for count in range(5):
         FORMAT = pyaudio.paInt16
         CHANNELS = 1
@@ -65,7 +64,7 @@ def record_sample():
         stream.close()
         audio.terminate()
 
-        OUTPUT_FILENAME = Name + "-sample" + str(count) + ".wav"
+        OUTPUT_FILENAME = name + "-sample" + str(count) + ".wav"
         WAVE_OUTPUT_FILENAME = os.path.join("training_data/voice", OUTPUT_FILENAME)
 
         trainedfilelist = open("training_set.txt", 'a')

@@ -1,9 +1,7 @@
 from imutils import paths
 import face_recognition
 import argparse
-import imutils
 import pickle
-import time
 import cv2
 import os,sys
 import math
@@ -11,12 +9,11 @@ import numpy as np
 
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
-ap.add_argument("-i", "--dataset",default="data/faces",
-	 help="path to input directory of faces + images")
-ap.add_argument("-e", "--encodings",type=str,default="models/encodings.pickle",help="path to serialized db of facial encodings")
-ap.add_argument("-c", "--cpus",type=str,default="-1",help="number of cpus to use during encoding")
-ap.add_argument("-d", "--detection-method", type=str, default="hog",
-                help="face detection model to use: either `hog` or `cnn`")
+ap.add_argument("-i", "--dataset",default="data/faces", help="path to input directory of faces + images")
+ap.add_argument("-e", "--encodings", type=str, default="models/encodings.pickle", help="path to serialized db of facial encodings")
+ap.add_argument("-c", "--cpus", type=str, default="-1", help="number of cpus to use during encoding")
+ap.add_argument("-d", "--detection-method", type=str, default="hog", help="face detection model to use: either `hog` or `cnn`")
+
 args = vars(ap.parse_args())
 
 def face_confidence(face_distance, face_match_threshold=0.6):
@@ -41,20 +38,19 @@ class FaceRecognition:
     def __init__(self):
         print("Welcome to face recognition system")
 
-    def take_picture(self):
+    def take_picture(self, name):
         flag = True
         faceCascade = cv2.CascadeClassifier('models/haarcascade_frontalface_default.xml')
         while flag:
-            name = input("Enter your name: ")
             # Create folder to  save images from user input
-            if not os.path.exists('data/faces/' + name):
-                os.mkdir('data/faces/' + name)
+            if not os.path.exists('training_data/face/' + name):
+                os.mkdir('training_data/face/' + name)
                 flag=False
             else:
                 print("Name already exists. Please try again ................")
-        cam = cv2.VideoCapture(0)
+        cam = cv2.VideoCapture(1)
         img_counter = 0
-        cv2.namedWindow("press space to take a photo", cv2.WINDOW_NORMAL)
+        cv2.namedWindow("Take the picture", cv2.WINDOW_NORMAL)
         cam.set(3,640)
         cam.set(4,480)
 
@@ -72,15 +68,16 @@ class FaceRecognition:
             )
             for (x, y, w, h) in faces:
                 cv2.rectangle(frame, (x, y), (x + w, y + h), (0,255,0), 2)
-            cv2.imshow("press space to take a photo", frame)
+                crop_image = frame[y:y + h, x:x + w]
+            cv2.imshow("Take the picture", frame)
             k = cv2.waitKey(1)
             if k == ord('q'):
                 print("Closing collecting data ................")
                 break
             elif k % 256 == 32:
                 # SPACE pressed
-                img_name = "data/faces/{}/{}.png".format(name, img_counter)
-                cv2.imwrite(img_name, frame)
+                img_name = "training_data/face/{}/{}.png".format(name, img_counter)
+                cv2.imwrite(img_name, crop_image)
                 print("{} written!".format(img_name))
                 img_counter += 1
                 if img_counter == 5:
@@ -90,15 +87,14 @@ class FaceRecognition:
         cv2.destroyAllWindows()
 
     def train_model(self):
-        imagePaths = list(paths.list_images('data/faces'))
-        print(imagePaths)
+        imagePaths = list(paths.list_images('training_data/face'))
+        # print(imagePaths)
         knownEncodings = []
         knownNames = []
         # loop over the image paths
         for (i, imagePath) in enumerate(imagePaths):
             # extract the person name from the image path
-            print("[INFO] processing image {}/{}".format(i + 1,
-                                                         len(imagePaths)))
+            print("Processing image {}/{}".format(i+1, len(imagePaths)))
             name = imagePath.split(os.path.sep)[-2]
             # load the input image and convert it from BGR (OpenCV ordering)
             # to dlib ordering (RGB)
@@ -118,11 +114,12 @@ class FaceRecognition:
                 knownEncodings.append(encoding)
                 knownNames.append(name)
                 # dump the facial encodings + names to disk
-                print("[INFO] serializing encodings...")
+                # print("[INFO] serializing encodings...")
                 data = {"encodings": knownEncodings, "names": knownNames}
                 f = open(args["encodings"], "wb")
                 f.write(pickle.dumps(data))
                 f.close()
+
     def run_recognition(self):
         video_capture = cv2.VideoCapture(0)
         data = pickle.loads(open(args["encodings"], "rb").read())
@@ -196,16 +193,3 @@ class FaceRecognition:
         # Release handle to the webcam
         video_capture.release()
         cv2.destroyAllWindows()
-
-fr = FaceRecognition()
-
-while True:
-    choice = int(input("\n 1. Take picture for trainning \n 2. Train Model \n 3. Face Recognition \n 4. Exit\n"))
-    if choice == 1:
-        fr.take_picture()
-    elif choice == 2:
-        fr.train_model()
-    elif choice == 3:
-        fr.run_recognition()
-    else:
-        exit()
