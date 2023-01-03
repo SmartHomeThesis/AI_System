@@ -134,6 +134,5 @@ def test_model(file_name):
         log_likelihood[i] = scores.sum()
         
     winner = np.argmax(log_likelihood)
-    print(speakers[0])
     winner_name = speakers[winner][7:]
     return winner_name
