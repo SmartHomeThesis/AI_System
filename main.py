@@ -88,7 +88,7 @@ while True:
         # Face flow
         print("*************************************************************************")
         print("************* Take 5 pictures to train model (Press Space) **************")
-        print("*************************************************************************")
+        print("*************************************************************************\n")
         countdown(5)
         fr.take_picture(name)
         fr.train_model()
@@ -96,7 +96,7 @@ while True:
         # Voice flow 
         print("*************************************************************************")
         print("************ Record your voice 5 times (5 seconds each time) ************")
-        print("*************************************************************************")
+        print("*************************************************************************\n")
         countdown(5)
         speaker_verification.record_sample(name) 
         speaker_verification.train_model()

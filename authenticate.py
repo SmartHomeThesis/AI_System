@@ -48,7 +48,7 @@ class FaceRecognition:
                 flag=False
             else:
                 print("Name already exists. Please try again ................")
-        cam = cv2.VideoCapture(1)
+        cam = cv2.VideoCapture(0)
         img_counter = 0
         cv2.namedWindow("Take the picture", cv2.WINDOW_NORMAL)
         cam.set(3,640)
@@ -78,7 +78,7 @@ class FaceRecognition:
                 # SPACE pressed
                 img_name = "training_data/face/{}/{}.png".format(name, img_counter)
                 cv2.imwrite(img_name, crop_image)
-                print("{} written!".format(img_name))
+                print("{} written!".format(img_name[19:]))
                 img_counter += 1
                 if img_counter == 5:
                     break
