@@ -13,8 +13,10 @@ The smart home system is built using a Jestson Nano as the main controller, with
 Developing the smart home system was a challenging but rewarding process. One of the biggest challenges was integrating the various hardware components and making sure they all worked together smoothly. We also had to spend a lot of time fine-tuning the face recognition and voice assistant algorithms to ensure good performance.
 
 ##  How to Install and Run the Project
-1. pip3 install -r requirements
-2. ./docker
+1. python3 -m venv .venv
+2. source .venv/bin/activate
+3. pip3 install -r requirements
+4. ./run.sh
 
 ## Conclusion
 We hope that our smart home system will make your life easier and more convenient. With the ability to control and monitor your home using face recognition and a voice assistant, you can feel confident that your home is secure and your needs are met.

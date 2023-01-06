@@ -3,6 +3,7 @@ import face_recognition
 import argparse
 import pickle
 import cv2
+import time
 import os,sys
 import math
 import numpy as np
@@ -37,10 +38,58 @@ class FaceRecognition:
 
     def __init__(self):
         print("Welcome to face recognition system")
+    # def take_picture(self):
+    #     flag = True
+    #     faceCascade = cv2.CascadeClassifier('models/haarcascade_frontalface_default.xml')
+    #     while flag:
+    #         name = input("Enter your name: ")
+    #         # Create folder to  save images from user input
+    #         if not os.path.exists('data/faces/' + name):
+    #             os.mkdir('data/faces/' + name)
+    #             flag=False
+    #         else:
+    #             print("Name already exists. Please try again ................")
+    #     cam = cv2.VideoCapture(0)
+    #     img_counter = 0
+    #     cv2.namedWindow("press space to take a photo", cv2.WINDOW_NORMAL)
+    #     cam.set(3,640)
+    #     cam.set(4,480)
+    #
+    #     while True:
+    #         ret, frame = cam.read()
+    #         if not ret:
+    #             print("failed to grab frame")
+    #             break
+    #         gray= cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    #         faces = faceCascade.detectMultiScale(
+    #             gray,
+    #             scaleFactor=1.3,
+    #             minNeighbors=5,
+    #             minSize=(20, 20)
+    #         )
+    #         for (x, y, w, h) in faces:
+    #             cv2.rectangle(frame, (x, y), (x + w, y + h), (0,255,0), 2)
+    #             crop_image = frame[y:y + h, x:x + w]
+    #         cv2.imshow("press space to take a photo", frame)
+    #         k = cv2.waitKey(1)
+    #         if k == ord('q'):
+    #             print("Closing collecting data ................")
+    #             break
+    #         elif k % 256 == 32:
+    #             # SPACE pressed
+    #             img_name = "data/faces/{}/{}.png".format(name, img_counter)
+    #             cv2.imwrite(img_name, crop_image)
+    #             print("{} written!".format(img_name))
+    #             img_counter += 1
+    #             if img_counter == 5:
+    #                 break
+    #
+    #     cam.release()
+    #     cv2.destroyAllWindows()
+    # using DNN model of opencv
 
     def take_picture(self, name):
         flag = True
-        faceCascade = cv2.CascadeClassifier('models/haarcascade_frontalface_default.xml')
         while flag:
             # Create folder to  save images from user input
             if not os.path.exists('training_data/face/' + name):
@@ -53,12 +102,35 @@ class FaceRecognition:
         cv2.namedWindow("Take the picture", cv2.WINDOW_NORMAL)
         cam.set(3,640)
         cam.set(4,480)
-
+        # used to record the time when we processed last frame
+        prev_frame_time = 0
         while True:
+            # Initialize the tick count
+
             ret, frame = cam.read()
+            # Calculate the FPS
+            new_frame_time = time.time()
+            fps = 1 / (new_frame_time - prev_frame_time)
+            prev_frame_time = new_frame_time
             if not ret:
                 print("failed to grab frame")
                 break
+            blob = cv2.dnn.blobFromImage(frame, 1.0, (300, 300), [104, 117, 123], False, False)
+            net = cv2.dnn.readNetFromCaffe('models/deploy.prototxt.txt', 'models/res10_300x300_ssd_iter_140000.caffemodel')
+            net.setInput(blob)
+            detections = net.forward()
+
+            for i in range(0, detections.shape[2]):
+                confidence = detections[0, 0, i, 2]
+                if confidence > 0.5:
+                    box = detections[0, 0, i, 3:7] * np.array([frame.shape[1], frame.shape[0], frame.shape[1], frame.shape[0]])
+                    (startX, startY, endX, endY) = box.astype("int")
+                    cv2.rectangle(frame, (startX, startY), (endX, endY), (0, 255, 0), 2)
+                    crop_image = frame[startY:endY, startX:endX]
+                # Display the FPS on the frame
+            cv2.putText(frame, "FPS: {:.2f}".format(fps), (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
+            cv2.imshow("press space to take a photo", frame)
+
             gray= cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             faces = faceCascade.detectMultiScale(
                 gray,
@@ -76,6 +148,9 @@ class FaceRecognition:
                 break
             elif k % 256 == 32:
                 # SPACE pressed
+                img_name = "data/faces/{}/{}.png".format(name, img_counter)
+                cv2.imwrite(img_name, crop_image)
+                print("{} written!".format(img_name))
                 img_name = "training_data/face/{}/{}.png".format(name, img_counter)
                 cv2.imwrite(img_name, crop_image)
                 print("{} written!".format(img_name[19:]))
@@ -85,6 +160,7 @@ class FaceRecognition:
 
         cam.release()
         cv2.destroyAllWindows()
+
 
     def train_model(self):
         imagePaths = list(paths.list_images('training_data/face'))
@@ -123,13 +199,24 @@ class FaceRecognition:
     def run_recognition(self):
         video_capture = cv2.VideoCapture(0)
         data = pickle.loads(open(args["encodings"], "rb").read())
+        video_capture.set(3, 640)
+        video_capture.set(4, 480)
         if not video_capture.isOpened():
             sys.exit('Video source not found...')
+        # used to record the time when we processed last frame
+        prev_frame_time = 0
 
+        # used to record the time at which we processed current frame
+        new_frame_time = 0
         while True:
             ret, frame = video_capture.read()
-
+            # Calculate the FPS
+            new_frame_time = time.time()
+            fps = 1 / (new_frame_time - prev_frame_time)
+            prev_frame_time = new_frame_time
             # Only process every other frame of video to save time
+            # Display the FPS on the frame
+            cv2.putText(frame, "FPS: {:.2f}".format(fps), (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
             if self.process_current_frame:
                 # Resize frame of video to 1/4 size for faster face recognition processing
                 small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
@@ -180,10 +267,10 @@ class FaceRecognition:
             cv2.imshow('Face Recognition', frame)
 
             # Authenticate successfully
-            # if self.cnt == 5:
-            #     video_capture.release()
-            #     cv2.destroyAllWindows()
-            #     return True, name[:name.index(".")].upper()
+            if self.cnt == 5:
+                video_capture.release()
+                cv2.destroyAllWindows()
+                return True, name[:name.index(".")].upper()
 
             # Hit 'q' on the keyboard to quit!
             if cv2.waitKey(1) == ord('q'):
