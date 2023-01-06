@@ -74,7 +74,7 @@ def control_device(bot_message, ser):
 
 def run_voice_bot():
     # Start the conversation
-    print("*******************************************************")
+    print("*************************************************************************")
     bot_message = "Xin chào, bạn khỏe không?"
     print("Bot: " + f"{bot_message}")
     text_to_speech(bot_message)
@@ -92,17 +92,14 @@ def run_voice_bot():
                 audio = r.record(source)  # read the entire audio file
                 user_message = (r.recognize_google(audio, language="vi")).lower()
             except:
-                print("")    
+                print("Listening!!!")    
         
         if len(user_message) == 0:
             continue
         
         # Speaker verification 
         print(test_model("user.wav") + ": {}".format(user_message))
-
-        os.remove("user.wav")
-        print("*******************************************************")
-
+        os.remove("user.wav")   
         r = requests.post('http://localhost:5002/webhooks/rest/webhook', json={"message": user_message})
 
         for i in r.json():
@@ -114,6 +111,7 @@ def run_voice_bot():
                 text_to_speech(bot_message) 
                    
             print("Bot: " + f"{bot_message}")
+            print("*************************************************************************")
 
 
 client = MQTTClient(AIO_USERNAME, AIO_KEY)
