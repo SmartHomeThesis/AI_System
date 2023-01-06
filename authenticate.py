@@ -10,7 +10,7 @@ import numpy as np
 
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
-ap.add_argument("-i", "--dataset",default="data/faces", help="path to input directory of faces + images")
+ap.add_argument("-i", "--dataset", default="training_data/face", help="path to input directory of faces + images")
 ap.add_argument("-e", "--encodings", type=str, default="models/encodings.pickle", help="path to serialized db of facial encodings")
 ap.add_argument("-c", "--cpus", type=str, default="-1", help="number of cpus to use during encoding")
 ap.add_argument("-d", "--detection-method", type=str, default="hog", help="face detection model to use: either `hog` or `cnn`")
@@ -36,9 +36,6 @@ class FaceRecognition:
     known_face_names = []
     process_current_frame = True
 
-    def __init__(self):
-        # print("Welcome to face recognition system")
-
     def take_picture(self, name):
         flag = True
         while flag:
@@ -48,6 +45,7 @@ class FaceRecognition:
                 flag=False
             else:
                 print("Name already exists. Please try again ................")
+
         cam = cv2.VideoCapture(0)
         img_counter = 0
         cv2.namedWindow("Take the picture", cv2.WINDOW_NORMAL)
@@ -80,18 +78,7 @@ class FaceRecognition:
                     crop_image = frame[startY:endY, startX:endX]
                 # Display the FPS on the frame
             cv2.putText(frame, "FPS: {:.2f}".format(fps), (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
-            cv2.imshow("press space to take a photo", frame)
 
-            gray= cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            faces = faceCascade.detectMultiScale(
-                gray,
-                scaleFactor=1.3,
-                minNeighbors=5,
-                minSize=(20, 20)
-            )
-            for (x, y, w, h) in faces:
-                cv2.rectangle(frame, (x, y), (x + w, y + h), (0,255,0), 2)
-                crop_image = frame[y:y + h, x:x + w]
             cv2.imshow("Take the picture", frame)
             k = cv2.waitKey(1)
             if k == ord('q'):
@@ -221,7 +208,7 @@ class FaceRecognition:
             if self.cnt == 5:
                 video_capture.release()
                 cv2.destroyAllWindows()
-                return True, name[:name.index(".")].upper()
+                return True, name[:name.index(" ")].upper()
 
             # Hit 'q' on the keyboard to quit!
             if cv2.waitKey(1) == ord('q'):

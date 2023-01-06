@@ -13,9 +13,8 @@ nlu:
     - [tắt](command) [đèn](device)
     - [mở](command) [đèn](device)
     - [bật](command) [đèn](device)
-    - [tắt](command) [cửa](device) 
+    - [đóng](command) [cửa](device) 
     - [mở](command) [cửa](device)
-    - [bật](command) [cửa](device)
 
 - lookup: place
   examples: |
@@ -28,6 +27,7 @@ nlu:
     - tắt 
     - mở 
     - bật
+    - đóng
 
 - lookup: device
   examples: |

@@ -59,7 +59,6 @@ class ActionControlDevice(Action):
         if command != None:        
             msg = f"{device} đã được {command}. False"
             dispatcher.utter_message(text=msg)
-            # helper(current_device, current_command)
             return [] 
         else:
             msg = f"Bạn muốn bật hay tắt {device}?"
