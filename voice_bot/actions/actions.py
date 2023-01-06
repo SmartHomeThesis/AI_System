@@ -24,7 +24,7 @@ class ActionTellTime(Action):
         utc = arrow.utcnow()
         
         if not current_place:
-            msg = f"Bây giờ là {utc.to(city_db['Việt Nam']).format('HH:mm')} phút."
+            msg = f"Bây giờ là {utc.to(city_db['việt nam']).format('HH:mm')} phút."
             dispatcher.utter_message(text=msg)
             return []
         
@@ -62,7 +62,7 @@ class ActionControlDevice(Action):
             return [] 
         else:
             msg = f"Bạn muốn bật hay tắt {device}?"
-            dispatcher.utter_message(text={"msg": msg, "is_sound": False})
+            dispatcher.utter_message(text=msg)
             return [] 
   
 class ActionHelloWorld(Action):
