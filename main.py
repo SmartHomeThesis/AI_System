@@ -92,23 +92,14 @@ def run_voice_bot():
                 audio = r.record(source)  # read the entire audio file
                 user_message = (r.recognize_google(audio, language="vi")).lower()
             except:
-<<<<<<< HEAD
                 print("Listening!!!")    
-=======
-                print("Listenting!!!")    
->>>>>>> de3dc2b7be117318c13c48280a56b83a4c0d0344
         
         if len(user_message) == 0:
             continue
         
         # Speaker verification 
         print(test_model("user.wav") + ": {}".format(user_message))
-<<<<<<< HEAD
         os.remove("user.wav")   
-=======
-
-        os.remove("user.wav")
->>>>>>> de3dc2b7be117318c13c48280a56b83a4c0d0344
         r = requests.post('http://localhost:5002/webhooks/rest/webhook', json={"message": user_message})
 
         for i in r.json():
@@ -157,7 +148,7 @@ def handle_AI():
         print("*             Welcome to our system. Plese select user type             *")
         print("* 1. Already have acount                                                *")
         print("* 2. New user                                                           *")
-        print("*************************************************************************")
+        print("*************************************************************************\n")
         user_choice = int(input())
 
         if user_choice == 1:
