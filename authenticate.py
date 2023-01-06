@@ -35,9 +35,6 @@ class FaceRecognition:
     known_face_names = []
     process_current_frame = True
 
-    def __init__(self):
-        print("Welcome to face recognition system")
-
     def take_picture(self, name):
         flag = True
         faceCascade = cv2.CascadeClassifier('models/haarcascade_frontalface_default.xml')
