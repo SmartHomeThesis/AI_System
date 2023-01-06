@@ -65,16 +65,16 @@ def control_device(bot_message, ser):
             setDevice2(True, ser)
             client.publish("smart-home.light", 1)
     else:
-        if "tắt" or "đóng" in bot_message:
-            setDevice1(False, ser)
-            client.publish("smart-home.door", 0)
-        else:
-            setDevice1(True, ser) 
+        if "mở" in bot_message:
+            setDevice1(True, ser)
             client.publish("smart-home.door", 1)
+        else:
+            setDevice1(False, ser) 
+            client.publish("smart-home.door", 0)
 
 def run_voice_bot():
     # Start the conversation
-    print("*******************************************************")
+    print("*************************************************************************")
     bot_message = "Xin chào, bạn khỏe không?"
     print("Bot: " + f"{bot_message}")
     text_to_speech(bot_message)
@@ -92,7 +92,7 @@ def run_voice_bot():
                 audio = r.record(source)  # read the entire audio file
                 user_message = (r.recognize_google(audio, language="vi")).lower()
             except:
-                print("")    
+                print("Listenting!!!")    
         
         if len(user_message) == 0:
             continue
@@ -101,8 +101,6 @@ def run_voice_bot():
         print(test_model("user.wav") + ": {}".format(user_message))
 
         os.remove("user.wav")
-        print("*******************************************************")
-
         r = requests.post('http://localhost:5002/webhooks/rest/webhook', json={"message": user_message})
 
         for i in r.json():
@@ -114,6 +112,7 @@ def run_voice_bot():
                 text_to_speech(bot_message) 
                    
             print("Bot: " + f"{bot_message}")
+            print("*************************************************************************")
 
 
 client = MQTTClient(AIO_USERNAME, AIO_KEY)
@@ -134,7 +133,7 @@ fr = FaceRecognition()
 def handle_sensor():
     count = 0
     while True:
-        if count == 100:
+        if count == 300:
             value_temp = readTemperature(ser)/10
             client.publish("smart-home.temperature", value_temp)
             value_humid = readHumidity(ser)/10
@@ -156,7 +155,9 @@ def handle_AI():
         if user_choice == 1:
             authentication, name = fr.run_recognition()
             if authentication == True:
-                client.publish("smart-home.face-recognition", name)   
+                client.publish("smart-home.face-recognition", name) 
+                client.publish("smart-home.door", 1) 
+                setDevice1(True, ser) 
                 run_voice_bot()
         elif user_choice == 2:
             name = input("Enter your name: ")
