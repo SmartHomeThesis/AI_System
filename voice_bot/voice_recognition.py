@@ -5,14 +5,14 @@ import requests
 import playsound
 import speech_recognition as sr   
 from gtts import gTTS
-from .speaker_verification import test_model
+# from .speaker_verification import test_model
 
 
 def record_audio():
     filename = "user.wav"
     chunk = 1024
     FORMAT = pyaudio.paInt16
-    channels = 1
+    channels = 2
     sample_rate = 44100
     record_seconds = 3
     p = pyaudio.PyAudio()
@@ -42,7 +42,9 @@ def record_audio():
 def text_to_speech(message):
     myobj = gTTS(message, lang="vi")
     myobj.save("audio.mp3")
+    print("Converts text to speech")
     playsound.playsound("audio.mp3")
+    print("Removes audio.mp3 file")
     os.remove("audio.mp3")
 
 
@@ -72,7 +74,8 @@ def run_voice_bot():
             continue
         
         # Speaker verification 
-        print(test_model("user.wav") + ": {}".format(user_message))
+        # print(test_model("user.wav") + ": {}".format(user_message))
+        print(user_message)
 
         os.remove("user.wav")
         print("*******************************************************")
