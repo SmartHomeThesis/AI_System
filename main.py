@@ -134,10 +134,10 @@ def handle_sensor():
     count = 0
     while True:
         if count == 300:
-            value_temp = readTemperature(ser)/10
-            client.publish("smart-home.temperature", value_temp)
-            value_humid = readHumidity(ser)/10
-            client.publish("smart-home.humidity", value_humid)
+            # value_temp = readTemperature(ser)/10
+            # client.publish("smart-home.temperature", value_temp)
+            # value_humid = readHumidity(ser)/10
+            # client.publish("smart-home.humidity", value_humid)
             count = 0
 
         count += 1
@@ -153,22 +153,22 @@ def handle_AI():
         user_choice = int(input())
 
         if user_choice == 1:
-            authentication, name = fr.run_recognition()
-            if authentication == True:
-                client.publish("smart-home.face-recognition", name) 
-                client.publish("smart-home.door", 1) 
-                setDevice1(True, ser) 
+            # authentication, name = fr.run_recognition()
+            # if authentication == True:
+            #     client.publish("smart-home.face-recognition", name) 
+            #     client.publish("smart-home.door", 1) 
+            #     setDevice1(True, ser) 
                 run_voice_bot()
         elif user_choice == 2:
             name = input("Enter your name: ")
 
-            # Face flow
-            print("*************************************************************************")
-            print("************* Take 5 pictures to train model (Press Space) **************")
-            print("*************************************************************************\n")
-            countdown(5)
-            fr.take_picture(name)
-            fr.train_model()
+            # # Face flow
+            # print("*************************************************************************")
+            # print("************* Take 5 pictures to train model (Press Space) **************")
+            # print("*************************************************************************\n")
+            # countdown(5)
+            # fr.take_picture(name)
+            # fr.train_model()
 
             # Voice flow 
             print("*************************************************************************")
