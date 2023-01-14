@@ -15,4 +15,3 @@ pyserial
 Adafruit-io
 python-dotenv
 arrow
-pygobject

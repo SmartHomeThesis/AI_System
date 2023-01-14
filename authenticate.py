@@ -13,7 +13,7 @@ ap = argparse.ArgumentParser()
 ap.add_argument("-i", "--dataset", default="training_data/face", help="path to input directory of faces + images")
 ap.add_argument("-e", "--encodings", type=str, default="models/encodings.pickle", help="path to serialized db of facial encodings")
 ap.add_argument("-c", "--cpus", type=str, default="-1", help="number of cpus to use during encoding")
-ap.add_argument("-d", "--detection-method", type=str, default="hog", help="face detection model to use: either `hog` or `cnn`")
+ap.add_argument("-d", "--detection-method", type=str, default="cnn", help="face detection model to use: either `hog` or `cnn`")
 
 args = vars(ap.parse_args())
 
@@ -118,7 +118,7 @@ class FaceRecognition:
             # detect the (x, y)-coordinates of the bounding boxes
             # corresponding to each face in the input image
             boxes = face_recognition.face_locations(rgb,
-                                                    model="hog")
+                                                    model=args["detection_method"])
             # compute the facial embedding for the face
             encodings = face_recognition.face_encodings(rgb, boxes)
             # loop over the encodings
@@ -163,7 +163,7 @@ class FaceRecognition:
                 rgb_small_frame = small_frame[:, :, ::-1]
 
                 # Find all the faces and face encodings in the current frame of video
-                self.face_locations = face_recognition.face_locations(rgb_small_frame)
+                self.face_locations = face_recognition.face_locations(rgb_small_frame,model=args["detection_method"])
                 self.face_encodings = face_recognition.face_encodings(rgb_small_frame, self.face_locations)
 
                 self.face_names = []
@@ -205,10 +205,10 @@ class FaceRecognition:
             cv2.imshow('Face Recognition', frame)
 
             # Authenticate successfully
-            if self.cnt == 5:
-                video_capture.release()
-                cv2.destroyAllWindows()
-                return True, name[:name.index(" ")].upper()
+            # if self.cnt == 5:
+            #     video_capture.release()
+            #     cv2.destroyAllWindows()
+            #     return True, name[:name.index(" ")].upper()
 
             # Hit 'q' on the keyboard to quit!
             if cv2.waitKey(1) == ord('q'):
