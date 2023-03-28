@@ -1,12 +1,42 @@
 version: "3.1"
 
 nlu:
+- intent: city
+  examples: |
+    - [Liverpool](location)
+    - [Milan](location)
+    - [Frankfurt](location)
+    - [Porto](location)
+    - [Madrid](location)
+    - [Barcelona](location)
+    - [Oslo](location)
+
+- intent: weather_city
+  examples: |
+    - tell me the weather in [Paris](location)
+    - I want to know the weather in [London](location)
+    - weather for [Athens](location) please
+    - what's the weather today in [Berlin](location)
+    - what's the temperature in [Washington](location) right now
+    - hows the weather in [Brussels](location)
+    - i want the temperature at [Rome](location)
+
+- intent: weather
+  examples: |
+    - tell me the weather
+    - I want to know the weather
+    - weather please
+    - what's the weather today
+    - what's the temperature right now
+    - hows the weather going to be
+    - i want to know the temperature
+
 - intent: inquire_time
   examples: |
     - Bây giờ là mấy giờ?
-    - [Việt Nam](place) bây giờ là mấy giờ?
-    - [London](place) bây giờ là mấy giờ?
-    - [New York](place) bây giờ là mấy giờ?
+    - [Việt Nam](location) bây giờ là mấy giờ?
+    - [London](location) bây giờ là mấy giờ?
+    - [New York](location) bây giờ là mấy giờ?
 
 - intent: control_device
   examples: |
@@ -16,7 +46,7 @@ nlu:
     - [đóng](command) [cửa](device) 
     - [mở](command) [cửa](device)
 
-- lookup: place
+- lookup: location
   examples: |
     - Việt Nam
     - London

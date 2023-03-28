@@ -10,29 +10,24 @@ from sklearn.mixture import GaussianMixture
 
 
 def calculate_delta(array):
-    rows, cols = array.shape
-    deltas = np.zeros((rows, 20))
+    rows,cols = array.shape
+    deltas = np.zeros((rows,20))
     N = 2
-
     for i in range(rows):
         index = []
         j = 1
-
         while j <= N:
             if i-j < 0:
-                first = 0
+              first =0
             else:
-                first = i-j
-
+              first = i-j
             if i+j > rows-1:
                 second = rows-1
             else:
-                second = i+j
-
-            index.append((second, first))
+                second = i+j 
+            index.append((second,first))
             j+=1
-
-        deltas[i] = (array[index[0][0]]-array[index[0][1]] + (2 * (array[index[1][0]]-array[index[1][1]]))) / 10
+        deltas[i] = ( array[index[0][0]]-array[index[0][1]] + (2 * (array[index[1][0]]-array[index[1][1]])) ) / 10
     return deltas
 
 def extract_features(audio, rate):    
@@ -40,7 +35,6 @@ def extract_features(audio, rate):
     mfcc_feature = preprocessing.scale(mfcc_feature)
     delta = calculate_delta(mfcc_feature)
     combined = np.hstack((mfcc_feature,delta))
-
     return combined
 
 def record_sample(name):
@@ -109,28 +103,29 @@ def train_model():
             features = np.asarray(())
             count = 0
 
-        count = count + 1
-
-def test_model(file_name):
-    src = "models/"
-     
-    gmm_files = [os.path.join(src, fname) for fname in os.listdir(src) if fname.endswith('.gmm')]
+        count += 1
+        
+def test_model(audio):
+    src = "models/voice/" 
+    gmm_files = [os.path.join(src, fname) for fname in os.listdir(src) if fname.endswith(".gmm")]
      
     # load the Gaussian gender Models
     models = [pickle.load(open(fname, 'rb')) for fname in gmm_files]
     speakers = [fname.split("\\")[-1].split(".gmm")[0] for fname in gmm_files]
      
     # read the test directory and get the list of test audio files 
-    sr, audio = read(file_name)
+    sr, audio = read(audio)
     vector = extract_features(audio, sr)
-        
     log_likelihood = np.zeros(len(models)) 
     
     for i in range(len(models)):
         gmm = models[i] 
         scores = np.array(gmm.score(vector))
         log_likelihood[i] = scores.sum()
-        
+         
+    winner_score = np.max(log_likelihood)   
+    if winner_score <= -25:
+        return "Unknown"
     winner = np.argmax(log_likelihood)
     winner_name = speakers[winner][7:]
     return winner_name
