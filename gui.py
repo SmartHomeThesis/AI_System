@@ -1,9 +1,25 @@
 import tkinter
 import tkinter.messagebox
 import customtkinter
+import os
+import sys
+import time
+import threading
+import requests
+import playsound
+from gtts import gTTS
+from authentication import FaceRecognition
+from util import getPort, countdown, speech_to_text, record_audio, login_button_event
+from dotenv import dotenv_values
+from Adafruit_IO import MQTTClient
+from speaker_verification import test_model, record_sample, train_model
+from voice_bot.physical import readHumidity, readTemperature, setDevice1, setDevice2
 
-customtkinter.set_appearance_mode("System")  # Modes: "System" (standard), "Dark", "Light"
-customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark-blue"
+
+
+
+customtkinter.set_appearance_mode("System")  
+customtkinter.set_default_color_theme("blue")  
 
 
 class App(customtkinter.CTk):
@@ -11,7 +27,7 @@ class App(customtkinter.CTk):
         super().__init__()
 
         # configure window
-        self.title("CustomTkinter complex_example.py")
+        self.title("AI Sytem - Cozy")
         self.geometry(f"{1100}x{580}")
 
         # configure grid layout (4x4)
@@ -23,14 +39,18 @@ class App(customtkinter.CTk):
         self.sidebar_frame = customtkinter.CTkFrame(self, width=140, corner_radius=0)
         self.sidebar_frame.grid(row=0, column=0, rowspan=4, sticky="nsew")
         self.sidebar_frame.grid_rowconfigure(4, weight=1)
-        self.logo_label = customtkinter.CTkLabel(self.sidebar_frame, text="CustomTkinter", font=customtkinter.CTkFont(size=20, weight="bold"))
+        self.logo_label = customtkinter.CTkLabel(self.sidebar_frame, text="Cozy App", font=customtkinter.CTkFont(size=20, weight="bold"))
         self.logo_label.grid(row=0, column=0, padx=20, pady=(20, 10))
-        self.sidebar_button_1 = customtkinter.CTkButton(self.sidebar_frame, command=self.sidebar_button_event)
+
+        self.sidebar_button_1 = customtkinter.CTkButton(self.sidebar_frame, command=login_button_event)
         self.sidebar_button_1.grid(row=1, column=0, padx=20, pady=10)
-        self.sidebar_button_2 = customtkinter.CTkButton(self.sidebar_frame, command=self.sidebar_button_event)
+        self.sidebar_button_1.configure(text="Register")
+
+        self.sidebar_button_2 = customtkinter.CTkButton(self.sidebar_frame, command=login_button_event)
         self.sidebar_button_2.grid(row=2, column=0, padx=20, pady=10)
-        self.sidebar_button_3 = customtkinter.CTkButton(self.sidebar_frame, command=self.sidebar_button_event)
-        self.sidebar_button_3.grid(row=3, column=0, padx=20, pady=10)
+        self.sidebar_button_2.configure(text="Login")
+
+       
         self.appearance_mode_label = customtkinter.CTkLabel(self.sidebar_frame, text="Appearance Mode:", anchor="w")
         self.appearance_mode_label.grid(row=5, column=0, padx=20, pady=(10, 0))
         self.appearance_mode_optionemenu = customtkinter.CTkOptionMenu(self.sidebar_frame, values=["Light", "Dark", "System"],
@@ -126,7 +146,6 @@ class App(customtkinter.CTk):
         self.checkbox_3.grid(row=3, column=0, pady=20, padx=20, sticky="n")
 
         # set default values
-        self.sidebar_button_3.configure(state="disabled", text="Disabled CTkButton")
         self.checkbox_3.configure(state="disabled")
         self.checkbox_1.select()
         self.scrollable_frame_switches[0].select()
@@ -154,9 +173,6 @@ class App(customtkinter.CTk):
     def change_scaling_event(self, new_scaling: str):
         new_scaling_float = int(new_scaling.replace("%", "")) / 100
         customtkinter.set_widget_scaling(new_scaling_float)
-
-    def sidebar_button_event(self):
-        print("sidebar_button click")
 
 
 if __name__ == "__main__":

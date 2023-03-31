@@ -3,6 +3,62 @@ import wave
 import pyaudio
 import serial.tools.list_ports
 import speech_recognition as sr
+from authentication import FaceRecognition
+import tkinter
+import tkinter.messagebox
+import customtkinter
+import os
+import sys
+import time
+import threading
+import requests
+import playsound
+from gtts import gTTS
+from authentication import FaceRecognition
+from dotenv import dotenv_values
+from Adafruit_IO import MQTTClient
+from speaker_verification import test_model, record_sample, train_model
+from voice_bot.physical import readHumidity, readTemperature, setDevice1, setDevice2
+
+from voice_bot.physical import setDevice1
+
+# Declare Adafruit IO components - Start
+config = dotenv_values(".env")
+AIO_KEY = config.get('AIO_KEY')
+AIO_USERNAME = config.get('AIO_USERNAME')
+AIO_FEED_DEVICE = ["smart-home.temperature", "smart-home.humidity", "smart-home.light", "smart-home.door", "smart-home.face-recognition"]
+
+
+def connected(client):
+    for feed in AIO_FEED_DEVICE:
+        client.subscribe(feed)
+
+# def message(client, feed_id, payload):
+#     if feed_id == AIO_FEED_DEVICE[2]:
+#         if payload == "0":
+#             setDevice2(False, ser)
+#         if payload == "1":
+#             setDevice2(True, ser)
+#     if feed_id == AIO_FEED_DEVICE[3]:
+#         if payload == "0":
+#             setDevice1(False, ser)
+#         if payload == "1":
+#             setDevice1(True, ser)        
+
+def disconnected():
+    sys.exit(1)
+
+
+client = MQTTClient(AIO_USERNAME, AIO_KEY)
+client.on_connect = connected
+client.on_disconnect = disconnected
+# client.on_message = message
+client.connect()
+client.loop_background()
+# Declare Adafruit IO components - End
+
+
+# Connect to USB port 
 
 def countdown(t):
     while t:
@@ -72,3 +128,12 @@ def speech_to_text(audio):
     except sr.RequestError as e:
         print("Could not request results; {0}".format(e))
 
+
+def login_button_event():
+    # Face Recognition
+    fr = FaceRecognition()
+    authentication, name = fr.run_recognition()
+    if authentication == True:
+        client.publish("smart-home.face-recognition", name) 
+        client.publish("smart-home.door", 1) 
+    # setDevice1(True, ser) 
