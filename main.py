@@ -13,7 +13,7 @@ from dotenv import dotenv_values
 
 from authentication import FaceRecognition
 from speaker_verification import record_sample, test_model, train_model
-from util import countdown, getPort, record_audio, speech_to_text, text_to_speech
+from util import countdown, getPort, readSerial, record_audio, speech_to_text, text_to_speech
 from voice_bot.physical import (readHumidity, readTemperature, setDevice1,
                                 setDevice2)
 
@@ -63,17 +63,13 @@ fr = FaceRecognition()
 def control_device(bot_message, ser):
     if "đèn" in bot_message:
         if "tắt" in bot_message:
-            setDevice2(False, ser)
             client.publish("smart-home.light", 0)
         else:
-            setDevice2(True, ser)
             client.publish("smart-home.light", 1)
     else:
         if "mở" in bot_message:
-            setDevice1(True, ser)
             client.publish("smart-home.door", 1)
         else:
-            setDevice1(False, ser) 
             client.publish("smart-home.door", 0)
 
 
@@ -92,7 +88,7 @@ def run_voice_bot():
         # os.remove("user.wav")
 
         username = "Hanh"
-        user_message = "Tắt đèn phòng khách"
+        user_message = "Tắt cửa phòng khách"
 
         if username != "Unknown" and user_message is not None:
             print(username + ": {}".format(user_message))
@@ -105,8 +101,8 @@ def run_voice_bot():
                         r = requests.post('http://localhost:5002/webhooks/rest/webhook', json={"message": user_message})
         
                         for i in r.json():
-                            # control_device(bot_message, ser)
                             bot_message = i["text"]
+                            control_device(bot_message, ser)
                             text_to_speech(bot_message) 
                         
                         print("Bot: " + f"{bot_message}")
@@ -133,10 +129,10 @@ def handle_sensor():
     count = 0
     while True:
         if count == 60:
-            value_temp = readTemperature(ser)/10
+            value_temp = readSerial(client, ser)/10
             client.publish("smart-home.temperature", value_temp)
-            value_humid = readHumidity(ser)/10
-            client.publish("smart-home.humidity", value_humid)
+            # value_humid = readHumidity(ser)/10
+            # client.publish("smart-home.humidity", value_humid)
             count = 0
 
         count += 1
@@ -191,3 +187,4 @@ def product():
     t2.join()
 
 run_voice_bot()
+# handle_sensor()

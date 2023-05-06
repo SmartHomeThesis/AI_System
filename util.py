@@ -1,6 +1,7 @@
 import os
 import time
 import wave
+import json
 import playsound
 
 import pyaudio
@@ -30,7 +31,7 @@ def getPort():
             commPort = (splitPort[0])
 
     if commPort != "None":
-        ser = serial.Serial(port=commPort, baudrate=9600)        
+        ser = serial.Serial(port=commPort, baudrate=9600)      
     return ser 
 
 def record_audio():
@@ -77,4 +78,4 @@ def text_to_speech(msg):
     audio.save("audio.mp3")
     playsound.playsound("audio.mp3")
     os.remove("audio.mp3")
- 
+
