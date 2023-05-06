@@ -1,16 +1,17 @@
 import os
-import wave
 import pickle
-import pyaudio
+import wave
+
 import numpy as np
-from sklearn import preprocessing
-from scipy.io.wavfile import read
+import pyaudio
 import python_speech_features as mfcc
-from sklearn.mixture import GaussianMixture 
+from scipy.io.wavfile import read
+from sklearn import preprocessing
+from sklearn.mixture import GaussianMixture
 
 
 def calculate_delta(array):
-    rows,cols = array.shape
+    rows, cols = array.shape
     deltas = np.zeros((rows,20))
     N = 2
     for i in range(rows):
@@ -73,37 +74,36 @@ def record_sample(name):
         waveFile.close()    
 
 def train_model():
-    src = "training_data/voice/"
+    src = os.listdir('D:\Smart-Device-Controller-System\\training_data\\voice')
     dest = "models/"
-    train_file = "training_set.txt"    
-    file_paths = open(train_file, 'r')
 
     count = 1
     features = np.asarray(())
 
-    for path in file_paths:    
-        path = path.strip()   
-        sr, audio = read(src + path)
+    for (i, path) in enumerate(src): 
+        sub_src = os.listdir('D:\Smart-Device-Controller-System\\training_data\\voice\\'+path)
+        for (j, sub_path) in enumerate(sub_src):
+            sr, audio = read('D:\Smart-Device-Controller-System\\training_data\\voice\\'+path+'\\'+sub_path)
 
-        vector = extract_features(audio, sr)
-        
-        if features.size == 0:
-            features = vector
-        else:
-            features = np.vstack((features, vector))
-
-        if count == 5:    
-            gmm = GaussianMixture(n_components=6, max_iter=200, covariance_type='diag', n_init=3)
-            gmm.fit(features)
+            vector = extract_features(audio, sr)
             
-            # dumping the trained gaussian model
-            picklefile = path.split("-")[0] + ".gmm"
-            pickle.dump(gmm, open(dest + picklefile, 'wb'))
-            print("Modelling completed for speaker:", picklefile, "with data point =", features.shape)   
-            features = np.asarray(())
-            count = 0
+            if features.size == 0:
+                features = vector
+            else:
+                features = np.vstack((features, vector))
 
-        count += 1
+            if count == 10:    
+                gmm = GaussianMixture(n_components=6, max_iter=200, covariance_type='diag', n_init=3)
+                gmm.fit(features)
+                
+                # dumping the trained gaussian model
+                picklefile = path.split("-")[0] + ".gmm"
+                pickle.dump(gmm, open(dest + picklefile, 'wb'))
+                print("Modelling completed for speaker:", picklefile, "with data point =", features.shape)   
+                features = np.asarray(())
+                count = 0
+
+            count += 1
         
 def test_model(audio):
     src = "models/voice/" 
@@ -127,5 +127,6 @@ def test_model(audio):
     if winner_score <= -25:
         return "Unknown"
     winner = np.argmax(log_likelihood)
-    winner_name = speakers[winner][7:]
+    winner_name = speakers[winner][13:]
     return winner_name
+

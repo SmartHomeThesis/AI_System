@@ -1,10 +1,10 @@
 from typing import Any, Text, Dict, List
 
-import arrow
 from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
 from rasa_sdk.events import SlotSet
 import requests
+import arrow
 
 
 city_db = {
@@ -23,13 +23,13 @@ class ActionGetWeather(Action):
         city = tracker.get_slot('location')
         api_token = "ad176833d289a46575e361b22f782cb6"
         url = "https://api.openweathermap.org/data/2.5/weather"
-        payload = {"q": city, "appid": api_token, "units": "metric", "lang": "en"}
+        payload = {"q": city, "appid": api_token, "units": "metric", "lang": "vi"}
         response = requests.get(url, params=payload)
         if response.ok:
             description = response.json()["weather"][0]["description"]
             temp = round(response.json()["main"]["temp"])
             city = response.json()["name"]
-            msg = f"The current temperature in {city} is {temp} degree Celsius. Today's forecast is {description}"
+            msg = f"Thời tiết hiện tại ở thành phố {city} là {temp} độ C. Hôm nay {description}"
         else:
             msg = "I'm sorry, an error with the requested city as occured."
         dispatcher.utter_message(msg)
@@ -81,7 +81,7 @@ class ActionControlDevice(Action):
             return []
                 
         if command != None:        
-            msg = f"{device} đã được {command}. False"
+            msg = f"{device} đã được {command}"
             dispatcher.utter_message(text=msg)
             return [] 
         else:

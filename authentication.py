@@ -50,7 +50,7 @@ class FaceRecognition:
                 print("Name already exists. Please try again ................")
 
         cam = cv2.VideoCapture(0)
-        img_counter = 0
+        img_counter = 1
         cv2.namedWindow("Take the picture", cv2.WINDOW_NORMAL)
         cam.set(3,640)
         cam.set(4,480)
@@ -95,7 +95,7 @@ class FaceRecognition:
                 cv2.imwrite(img_name, crop_image)
                 print("{} written!".format(img_name[19:]))
                 img_counter += 1
-                if img_counter == 5:
+                if img_counter == 6:
                     break
 
         cam.release()
@@ -118,8 +118,7 @@ class FaceRecognition:
 
             # detect the (x, y)-coordinates of the bounding boxes
             # corresponding to each face in the input image
-            boxes = face_recognition.face_locations(rgb,
-                                                    model=args["detection_method"])
+            boxes = face_recognition.face_locations(rgb, model=args["detection_method"])
             # compute the facial embedding for the face
             encodings = face_recognition.face_encodings(rgb, boxes)
             # loop over the encodings
