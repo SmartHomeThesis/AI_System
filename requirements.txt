@@ -1,0 +1,17 @@
+imutils
+numpy
+opencv-python
+face-recognition
+rasa
+SQLAlchemy==1.4.45
+PyAudio
+scikit-learn
+python_speech_features
+requests
+playsound==1.2.2
+SpeechRecognition
+gtts
+pyserial
+Adafruit-io
+python-dotenv
+arrow
