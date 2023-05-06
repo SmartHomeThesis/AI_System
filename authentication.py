@@ -205,7 +205,7 @@ class FaceRecognition:
             cv2.imshow('Face Recognition', frame)
 
             # Authenticate successfully
-            if self.cnt == 10:
+            if self.cnt == 5:
                 video_capture.release()
                 cv2.destroyAllWindows()
                 return True, name[:name.index(" ")].upper()

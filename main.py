@@ -1,8 +1,8 @@
 import json
 import os
 import sys
-import threading
 import time
+import keyboard
 import urllib.request
 
 
@@ -13,16 +13,15 @@ from dotenv import dotenv_values
 
 from authentication import FaceRecognition
 from speaker_verification import record_sample, test_model, train_model
-from util import countdown, getPort, readSerial, record_audio, speech_to_text, text_to_speech
-from voice_bot.physical import (readHumidity, readTemperature, setDevice1,
-                                setDevice2)
+from util import countdown, getPort, record_audio, speech_to_text, text_to_speech
+from voice_bot.physical import (setDevice1, setDevice2)
 
 
 # Declare Adafruit IO components - Start
 config = dotenv_values(".env")
 AIO_KEY = config.get('AIO_KEY')
 AIO_USERNAME = config.get('AIO_USERNAME')
-AIO_FEED_DEVICE = ["smart-home.temperature", "smart-home.humidity", "smart-home.light", "smart-home.door", "smart-home.face-recognition"]
+AIO_FEED_DEVICE = ["smart-home.temperature", "smart-home.humidity", "smart-home.light_livingroom", "smart-home.light_bedroom", "smart-home.door", "smart-home.face-recognition"]
 
 
 def connected(client):
@@ -60,14 +59,14 @@ ser = getPort()
 fr = FaceRecognition()
 
 
-def control_device(bot_message, ser):
-    if "đèn" in bot_message:
-        if "tắt" in bot_message:
+def control_device(msg):
+    if "đèn" in msg:
+        if "tắt" in msg:
             client.publish("smart-home.light", 0)
         else:
             client.publish("smart-home.light", 1)
     else:
-        if "mở" in bot_message:
+        if "mở" in msg:
             client.publish("smart-home.door", 1)
         else:
             client.publish("smart-home.door", 0)
@@ -88,61 +87,35 @@ def run_voice_bot():
         # os.remove("user.wav")
 
         username = "Hanh"
-        user_message = "Tắt cửa phòng khách"
+        user_message = "Hà Nội thời tiết như thế nào"
 
-        if username != "Unknown" and user_message is not None:
-            print(username + ": {}".format(user_message))
-            user = json.loads(urllib.request.urlopen(f"https://backend-production-a7e0.up.railway.app/api/utils/user-permission/{username}").read())
-
-            start = time.time()
-            if user["permission"]:
-                for permission in user["permission"]:
-                    if permission.lower() in user_message or user["permission"] == "All":
-                        r = requests.post('http://localhost:5002/webhooks/rest/webhook', json={"message": user_message})
-        
-                        for i in r.json():
-                            bot_message = i["text"]
-                            control_device(bot_message, ser)
-                            text_to_speech(bot_message) 
-                        
-                        print("Bot: " + f"{bot_message}")
-                        print("*************************************************************************")
-                        end = time.time()
-                        print(end-start)
-                        break
-                    else: 
-                        text_to_speech("Không thể thực hiện hành động này")
-                        break
+        if user_message is not None:
+            if "Mở" in user_message or "Đóng" in user_message or "Tắt" in user_message and username != "Unknown":
+                print(username + ": {}".format(user_message))
+                start = time.time()
+                user = json.loads(urllib.request.urlopen(f"https://backend-production-a7e0.up.railway.app/api/utils/user-permission/{username}").read())
+                if user["permission"]:
+                    for permission in user["permission"]:
+                        if permission.lower() in user_message or user["permission"] == "All":
+                            control_device(user_message)
+                            end = time.time()
+                            print(end-start)
+                            break
+                else:
+                    text_to_speech("Không thể thực hiện hành động này")
             else:
-                text_to_speech("Không thể thực hiện hành động này")    
+                r = requests.post('http://localhost:5002/webhooks/rest/webhook', json={"message": user_message})
+                for i in r.json():
+                    bot_message = i["text"]
+                    text_to_speech(bot_message) 
         else:
-            text_to_speech("Không thể thực hiện hành động này") 
+            break        
 
-     
-
-        
-
- 
-       
-                   
-def handle_sensor():
-    count = 0
-    while True:
-        if count == 60:
-            value_temp = readSerial(client, ser)/10
-            client.publish("smart-home.temperature", value_temp)
-            # value_humid = readHumidity(ser)/10
-            # client.publish("smart-home.humidity", value_humid)
-            count = 0
-
-        count += 1
-        time.sleep(1)
-
-
+                    
 def handle_AI():
     while True:
         print("*************************************************************************")
-        print("*                         Welcome to our system                         *")
+        print("*                            WELCOME TO COZY                            *")
         print("* 1. Login                                                              *")
         print("* 2. Register                                                           *")
         print("*************************************************************************\n")
@@ -153,8 +126,11 @@ def handle_AI():
             if authentication == True:
                 client.publish("smart-home.face-recognition", name) 
                 client.publish("smart-home.door", 1) 
-                setDevice1(True, ser) 
-                run_voice_bot()
+                while True:
+                    if keyboard.is_pressed("a"):
+                        run_voice_bot()
+                    elif keyboard.is_pressed("q"):
+                        break
         elif user_choice == 2:
             name = input("Enter your name: ")
 
@@ -176,15 +152,6 @@ def handle_AI():
         else:   
             exit()
 
-def product():
-    t1 = threading.Thread(target=handle_sensor, name='t1')
-    t2 = threading.Thread(target=handle_AI, name='t2')
 
-    t1.start()
-    t2.start()
-
-    t1.join()
-    t2.join()
-
-run_voice_bot()
-# handle_sensor()
+if __name__ == '__main__':
+    handle_AI()

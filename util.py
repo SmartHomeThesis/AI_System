@@ -1,7 +1,6 @@
 import os
 import time
 import wave
-import json
 import playsound
 
 import pyaudio
