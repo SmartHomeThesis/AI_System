@@ -135,7 +135,7 @@ class FaceRecognition:
                 f.close()
 
     def run_recognition(self):
-        video_capture = cv2.VideoCapture(0)
+        video_capture = cv2.VideoCapture(0,cv2.CAP_DSHOW) 
         data = pickle.loads(open(args["encodings"], "rb").read())
         video_capture.set(3, 640)
         video_capture.set(4, 480)
