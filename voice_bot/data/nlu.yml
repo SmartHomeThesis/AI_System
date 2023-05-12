@@ -13,23 +13,16 @@ nlu:
 
 - intent: weather_city
   examples: |
-    - tell me the weather in [Paris](location)
-    - I want to know the weather in [London](location)
-    - weather for [Athens](location) please
-    - what's the weather today in [Berlin](location)
-    - what's the temperature in [Washington](location) right now
-    - hows the weather in [Brussels](location)
-    - i want the temperature at [Rome](location)
+    - Tôi muốn biết thời tiết ở [Hà Nội](location)
+    - Bây giờ thời tiết như thế nào ở [New York]
 
 - intent: weather
   examples: |
-    - tell me the weather
-    - I want to know the weather
-    - weather please
-    - what's the weather today
-    - what's the temperature right now
-    - hows the weather going to be
-    - i want to know the temperature
+    - Nói cho tôi nghe thời tiết hôm nay 
+    - Thời tiết hôm nay thế nào 
+    - Nhiệt độ ngay bây giờ là bao nhiêu 
+    - Nhiệt độ bây giờ là
+    - Tôi muốn biết nhiệt độ 
 
 - intent: inquire_time
   examples: |
@@ -49,6 +42,8 @@ nlu:
 - lookup: location
   examples: |
     - Việt Nam
+    - Rome
+    - Brussels
     - London
     - New York
 

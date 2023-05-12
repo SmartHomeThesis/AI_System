@@ -3,13 +3,11 @@ __pycache__/
 .vscode/
 
 # Distribution / packaging
-.Python
 node_modules
 voice_bot/.rasa
-training_data/training_set.txt
+training_data/
 
 # Environments
 .env
-.venv
-env/
 venv/
+.idea
