@@ -10,3 +10,4 @@ training_data/
 # Environments
 .env
 venv/
+.idea
