@@ -21,7 +21,7 @@ from voice_bot.physical import (setDevice1, setDevice2)
 config = dotenv_values(".env")
 AIO_KEY = config.get('AIO_KEY')
 AIO_USERNAME = config.get('AIO_USERNAME')
-AIO_FEED_DEVICE = ["smart-home.temperature", "smart-home.humidity", "smart-home.light_livingroom", "smart-home.light_bedroom", "smart-home.door", "smart-home.face-recognition"]
+AIO_FEED_DEVICE = ["smart-home.temperature", "smart-home.humidity", "smart-home.light-livingroom", "smart-home.fan-livingroom", "smart-home.light-bedroom", "smart-home.door", "smart-home.face-recognition"]
 
 
 def connected(client):
@@ -81,13 +81,14 @@ def run_voice_bot():
         bot_message = ""
         
         
-        # record_audio()
-        # username = test_model("user.wav")
-        # user_message = speech_to_text("user.wav")s
-        # os.remove("user.wav")
+        record_audio()
+        username = test_model("user.wav")
+        user_message = speech_to_text("user.wav")
+        os.remove("user.wav")
+        print(username + ": {}".format(user_message))
 
-        username = "Hanh"
-        user_message = "Hà Nội thời tiết như thế nào"
+        # username = "Hanh"
+        # user_message = "Hà Nội thời tiết như thế nào"
 
         if user_message is not None:
             if "Mở" in user_message or "Đóng" in user_message or "Tắt" in user_message and username != "Unknown":
@@ -104,12 +105,10 @@ def run_voice_bot():
                 else:
                     text_to_speech("Không thể thực hiện hành động này")
             else:
-                r = requests.post('http://localhost:5002/webhooks/rest/webhook', json={"message": user_message})
+                r = requests.post('http://localhost:5005/webhooks/rest/webhook', json={"message": user_message})
                 for i in r.json():
                     bot_message = i["text"]
-                    text_to_speech(bot_message) 
-        else:
-            break        
+                    text_to_speech(bot_message)       
 
                     
 def handle_AI():
@@ -134,17 +133,17 @@ def handle_AI():
         elif user_choice == 2:
             name = input("Enter your name: ")
 
-            # Face flow
-            print("*************************************************************************")
-            print("************* Take 5 pictures to train model (Press Space) **************")
-            print("*************************************************************************\n")
-            countdown(5)
-            fr.take_picture(name)
-            fr.train_model()
+            # # Face flow
+            # print("*************************************************************************")
+            # print("************* Take 5 pictures to train model (Press Space) **************")
+            # print("*************************************************************************\n")
+            # countdown(5)
+            # fr.take_picture(name)
+            # fr.train_model()
 
             # Voice flow 
             print("*************************************************************************")
-            print("************ Record your voice 5 times (5 seconds each time) ************")
+            print("************ Record your voice 10 times (5 seconds each time) ***********")
             print("*************************************************************************\n")
             countdown(5)
             record_sample(name) 
@@ -155,3 +154,4 @@ def handle_AI():
 
 if __name__ == '__main__':
     handle_AI()
+# run_voice_bot()

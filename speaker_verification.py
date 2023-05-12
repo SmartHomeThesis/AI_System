@@ -39,9 +39,9 @@ def extract_features(audio, rate):
     return combined
 
 def record_sample(name):
-    for count in range(5):
+    for count in range(10):
         FORMAT = pyaudio.paInt16
-        CHANNELS = 2
+        CHANNELS = 1
         RATE = 44100
         CHUNK = 1024
         RECORD_SECONDS = 5
@@ -60,7 +60,7 @@ def record_sample(name):
         audio.terminate()
 
         OUTPUT_FILENAME = name + "-sample" + str(count) + ".wav"
-        WAVE_OUTPUT_FILENAME = os.path.join("training_data/voice", OUTPUT_FILENAME)
+        WAVE_OUTPUT_FILENAME = os.path.join("training_data/voice/" + name, OUTPUT_FILENAME)
 
         trainedfilelist = open("training_set.txt", 'a')
         trainedfilelist.write(OUTPUT_FILENAME + "\n")
@@ -75,7 +75,7 @@ def record_sample(name):
 
 def train_model():
     src = os.listdir('D:\Smart-Device-Controller-System\\training_data\\voice')
-    dest = "models/"
+    dest = "models/voice/"
 
     count = 1
     features = np.asarray(())
@@ -124,7 +124,8 @@ def test_model(audio):
         log_likelihood[i] = scores.sum()
          
     winner_score = np.max(log_likelihood)   
-    if winner_score <= -25:
+    print(winner_score)
+    if winner_score <= -28:
         return "Unknown"
     winner = np.argmax(log_likelihood)
     winner_name = speakers[winner][13:]
