@@ -39,7 +39,7 @@ class FaceRecognition:
     known_face_names = []
     process_current_frame = True
 
-    def take_picture(self, name):
+    def take_picture(self, name="Phuoc"):
         flag = True
         while flag:
             # Create folder to  save images from user input
