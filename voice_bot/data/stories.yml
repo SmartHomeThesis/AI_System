@@ -1,27 +1,14 @@
 version: "3.1"
 
 stories:
-- story: ask weather with city happy path
+- story: ask weather with city 
   steps:
-  - intent: weather_city
+  - intent: inquire_weather
     entities:
     - location: Rome
   - slot_was_set:
     - location: Rome
-  - action: action_get_weather
-  - slot_was_set:
-    - location: null
-
-- story: ask weather happy path
-  steps:
-  - intent: weather
-  - action: utter_ask_location
-  - intent: city
-    entities:
-    - location: Madrid
-  - slot_was_set:
-    - location: Madrid
-  - action: action_get_weather
+  - action: action_tell_weather
   - slot_was_set:
     - location: null
 

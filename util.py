@@ -40,13 +40,13 @@ def record_audio():
     channels = 1
     sample_rate = 44100
     record_seconds = 3
-    micro_index =1 
+    micro_index = 1 
     p = pyaudio.PyAudio()
     # open stream object as input & output
     stream = p.open(format=FORMAT, channels=channels, rate=sample_rate, input=True, frames_per_buffer=chunk, input_device_index=micro_index)
     frames = []
 
-    print("Listening...")
+    text_to_speech("Bạn cần giúp gì")
     for i in range(0, int(sample_rate / chunk * record_seconds)):
         data = stream.read(chunk)
         frames.append(data)
@@ -68,11 +68,7 @@ def speech_to_text(audio):
         audio = r.record(source, duration=3)   
     try:
         return r.recognize_google(audio, language="vi")
-    except sr.UnknownValueError:
-        print("Could not understand audio")
-        return None
-    except sr.RequestError as e:
-        print("Could not request results; {0}".format(e))
+    except sr.UnknownValueError or sr.RequestError:
         return None
 
 def text_to_speech(msg):
@@ -81,3 +77,18 @@ def text_to_speech(msg):
     playsound.playsound("audio.mp3")
     os.remove("audio.mp3")
 
+relay1_ON  = [15, 6, 0, 0, 0, 255, 200, 164]
+relay1_OFF = [15, 6, 0, 0, 0, 0, 136, 228]
+def setDevice1(state, ser):
+    if state == True:
+        ser.write(relay1_ON)
+    else:
+        ser.write(relay1_OFF)
+
+relay2_ON  = [0, 6, 0, 0, 0, 255, 200, 91]
+relay2_OFF = [0, 6, 0, 0, 0, 0, 136, 27]
+def setDevice2(state, ser):
+    if state == True:
+        ser.write(relay2_ON)
+    else:
+        ser.write(relay2_OFF)

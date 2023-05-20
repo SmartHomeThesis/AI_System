@@ -1,51 +1,41 @@
 version: "3.1"
 
 nlu:
-- intent: city
+- intent: inquire_weather
   examples: |
-    - [Liverpool](location)
-    - [Milan](location)
-    - [Frankfurt](location)
-    - [Porto](location)
-    - [Madrid](location)
-    - [Barcelona](location)
-    - [Oslo](location)
-
-- intent: weather_city
-  examples: |
-    - Tôi muốn biết thời tiết ở [Hà Nội](location)
-    - Bây giờ thời tiết như thế nào ở [New York]
-
-- intent: weather
-  examples: |
-    - Nói cho tôi nghe thời tiết hôm nay 
-    - Thời tiết hôm nay thế nào 
-    - Nhiệt độ ngay bây giờ là bao nhiêu 
-    - Nhiệt độ bây giờ là
-    - Tôi muốn biết nhiệt độ 
+    - nói cho tôi nghe thời tiết hôm nay 
+    - thời tiết hôm nay thế nào 
+    - tôi muốn biết thời tiết ở [Hà Nội](location)
+    - bây giờ thời tiết như thế nào ở [New York](location)
 
 - intent: inquire_time
   examples: |
-    - Bây giờ là mấy giờ?
-    - [Việt Nam](location) bây giờ là mấy giờ?
-    - [London](location) bây giờ là mấy giờ?
-    - [New York](location) bây giờ là mấy giờ?
+    - bây giờ là mấy giờ
+    - [Việt Nam](location) bây giờ là mấy giờ
+    - [Hàn Quốc](location) bây giờ là mấy giờ
+    - [London](location) bây giờ là mấy giờ
+    - [New York](location) bây giờ là mấy giờ
 
 - intent: control_device
   examples: |
-    - [tắt](command) [đèn](device)
-    - [mở](command) [đèn](device)
-    - [bật](command) [đèn](device)
-    - [đóng](command) [cửa](device) 
-    - [mở](command) [cửa](device)
+    - [tắt](command) [đèn](device) [phòng khách](room)
+    - [mở](command) [đèn](device)  [phòng khách](room)
+    - [bật](command) [đèn](device) [phòng khách](room)
+    - [tắt](command) [đèn](device) [phòng ngủ](room)
+    - [mở](command) [đèn](device)  [phòng ngủ](room)
+    - [bật](command) [đèn](device) [phòng ngủ](room)
+    - [đóng](command) [cửa](device) [nhà xe](room)
+    - [mở](command) [cửa](device) [nhà xe](room)
 
 - lookup: location
   examples: |
     - Việt Nam
+    - Hà Nội
     - Rome
-    - Brussels
+    - Hàn Quốc
     - London
     - New York
+    - Băng Cốc
 
 - lookup: command
   examples: |
@@ -59,6 +49,12 @@ nlu:
     - đèn
     - cửa
 
+- lookup: room
+  examples: |
+    - phòng khách
+    - phòng ngủ
+    - nhà xe    
+
 - intent: greet
   examples: |
     - chào
@@ -70,7 +66,6 @@ nlu:
     - chào buổi tối
     - chào buổi chiều
     - chào em
-    - chào đằng ấy
     - hey
     - hello
     - hi
@@ -93,7 +88,6 @@ nlu:
     - hẹn gặp lại
     - lúc khác gặp lại
     - về đây
-    - cu
     - good by
     - cee you later
     - good night

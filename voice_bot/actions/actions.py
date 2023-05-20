@@ -1,23 +1,17 @@
-from typing import Any, Text, Dict, List
+from typing import Any, Dict, List, Text
 
-from rasa_sdk import Action, Tracker
-from rasa_sdk.executor import CollectingDispatcher
-from rasa_sdk.events import SlotSet
-import requests
 import arrow
-
-
-city_db = {
-    'việt nam': 'Asia/Hanoi',
-    'london': 'Europe/London',
-    'new york': 'US/Central'
-}
+import requests
+from geopy.geocoders import Nominatim
+from rasa_sdk import Action
+from rasa_sdk.events import SlotSet
+from timezonefinder import TimezoneFinder
 
 
 class ActionGetWeather(Action):
     """ Return today's weather forecast"""
     def name(self):
-        return "action_get_weather"
+        return "action_tell_weather"
 
     def run(self, dispatcher, tracker, domain):
         city = tracker.get_slot('location')
@@ -25,13 +19,14 @@ class ActionGetWeather(Action):
         url = "https://api.openweathermap.org/data/2.5/weather"
         payload = {"q": city, "appid": api_token, "units": "metric", "lang": "vi"}
         response = requests.get(url, params=payload)
+
         if response.ok:
             description = response.json()["weather"][0]["description"]
             temp = round(response.json()["main"]["temp"])
             city = response.json()["name"]
             msg = f"Thời tiết hiện tại ở thành phố {city} là {temp} độ C. Hôm nay {description}"
         else:
-            msg = "I'm sorry, an error with the requested city as occured."
+            msg = "Xin lỗi, tôi không thể tìm thấy thành phố đó"
         dispatcher.utter_message(msg)
         return [SlotSet("location", None)]
 
@@ -41,24 +36,29 @@ class ActionTellTime(Action):
     def name(self) -> Text:
         return "action_tell_time"
 
-    def run(self, dispatcher: CollectingDispatcher,
-            tracker: Tracker,
-            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         current_place = next(tracker.get_latest_entity_values("place"), None)
         utc = arrow.utcnow()
         
         if not current_place:
-            msg = f"Bây giờ là {utc.to(city_db['việt nam']).format('HH:mm')} phút."
+            msg = f"Bây giờ là {utc.to('Asia/Hanoi').format('HH:mm')} phút."
             dispatcher.utter_message(text=msg)
             return []
         
-        tz_string = city_db.get(current_place, None)
-        if not tz_string:
-            msg = f"Tôi không tìm thấy {current_place}. Bạn có chắc về sự tồn tại của nơi này không?"
-            dispatcher.utter_message(text=msg)
-            return []
+        geolocator = Nominatim(user_agent="geoapiExercises")
+        location = geolocator.geocode(current_place)
+        
+        obj = TimezoneFinder()
+        result = obj.timezone_at(lng=location.longitude, lat=location.latitude)
+        print("Time Zone : ", result)
+
+        # tz_string = city_db.get(current_place, None)
+        # if not tz_string:
+        #     msg = f"Tôi không tìm thấy {current_place}. Bạn có chắc về sự tồn tại của nơi này không?"
+        #     dispatcher.utter_message(text=msg)
+        #     return []
                 
-        msg = f"Bây giờ là {utc.to(city_db[current_place]).format('HH:mm')} ở {current_place}."
+        msg = f"Bây giờ là {utc.to(result).format('HH:mm')} ở {current_place}."
         dispatcher.utter_message(text=msg)
         
         return []
@@ -68,9 +68,7 @@ class ActionControlDevice(Action):
     def name(self) -> Text:
         return "action_control_device"
 
-    def run(self, dispatcher: CollectingDispatcher, 
-            tracker: Tracker, 
-            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
 
         command = next(tracker.get_latest_entity_values("command"), None)
         device = next(tracker.get_latest_entity_values("device"), None)
@@ -85,7 +83,7 @@ class ActionControlDevice(Action):
             dispatcher.utter_message(text=msg)
             return [] 
         else:
-            msg = f"Bạn muốn bật hay tắt {device}?"
+            msg = f"Bạn muốn thực hiện hành động gì với {device}?"
             dispatcher.utter_message(text=msg)
             return [] 
   
@@ -94,9 +92,7 @@ class ActionHelloWorld(Action):
     def name(self) -> Text:
         return "action_your_num"
 
-    def run(self, dispatcher: CollectingDispatcher,
-            tracker: Tracker,
-            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
         print(tracker.get_slot('num'))
         return []
 
