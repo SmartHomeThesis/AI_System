@@ -219,6 +219,4 @@ class FaceRecognition:
 
         # Release handle to the webcam
         video_capture.release()
-        cv2.destroyAllWindows()
-fr = FaceRecognition()
-fr.run_recognition()
+        cv2.destroyAllWindows()  

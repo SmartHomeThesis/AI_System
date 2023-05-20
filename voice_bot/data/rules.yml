@@ -16,3 +16,8 @@ rules:
   steps:
   - intent: inquire_time
   - action: action_tell_time    
+
+- rule: Tell the weather
+  steps:
+  - intent: inquire_weather
+  - action: action_tell_weather   

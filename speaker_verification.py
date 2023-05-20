@@ -62,15 +62,11 @@ def record_sample(name):
         OUTPUT_FILENAME = name + "-sample" + str(count) + ".wav"
         WAVE_OUTPUT_FILENAME = os.path.join("training_data/voice/" + name, OUTPUT_FILENAME)
 
-        trainedfilelist = open("training_set.txt", 'a')
-        trainedfilelist.write(OUTPUT_FILENAME + "\n")
-
         waveFile = wave.open(WAVE_OUTPUT_FILENAME, 'wb')
         waveFile.setnchannels(CHANNELS)
         waveFile.setsampwidth(audio.get_sample_size(FORMAT))
         waveFile.setframerate(RATE)
         waveFile.writeframes(b''.join(Recordframes))
-
         waveFile.close()    
 
 def train_model():
@@ -92,7 +88,7 @@ def train_model():
             else:
                 features = np.vstack((features, vector))
 
-            if count == 10:    
+            if count == 8:    
                 gmm = GaussianMixture(n_components=6, max_iter=200, covariance_type='diag', n_init=3)
                 gmm.fit(features)
                 
@@ -125,9 +121,18 @@ def test_model(audio):
          
     winner_score = np.max(log_likelihood)   
     print(winner_score)
-    if winner_score <= -28:
+    if winner_score <= -26.5:
         return "Unknown"
     winner = np.argmax(log_likelihood)
     winner_name = speakers[winner][13:]
     return winner_name
+
+def evaluate_model():
+    test_data = os.listdir('D:\Smart-Device-Controller-System\\testing_data\\voice')
+    
+    for (i, path) in enumerate(test_data): 
+        sub_src = os.listdir('D:\Smart-Device-Controller-System\\testing_data\\voice\\'+path)
+        for (j, sub_path) in enumerate(sub_src):
+            print("Data: " + path + ", Label: " + test_model('D:\Smart-Device-Controller-System\\testing_data\\voice\\'+path+'\\'+sub_path))
+
 

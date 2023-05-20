@@ -5,7 +5,6 @@ __pycache__/
 # Distribution / packaging
 node_modules
 voice_bot/.rasa
-training_data/
 
 # Environments
 .env
