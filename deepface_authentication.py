@@ -1,4 +1,5 @@
 import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 from deepface import DeepFace
 from deepface.basemodels import Facenet
 import cv2
@@ -148,7 +149,7 @@ class FaceRecognition:
                     cv2.rectangle(frame, (startX, startY), (endX, endY), (0, 255, 0), 2)
                     response = DeepFace.find(img_path=frame, db_path=self.db_path, model_name=self.models[1],
                                              distance_metric = self.metrics[0]
-                                             , silent=True, enforce_detection=False)
+                                             , silent=True, enforce_detection=False, detector_backend='opencv')
                     print('response', response)
                     accuracy = 0
                     if len(response[0]) != 0:
