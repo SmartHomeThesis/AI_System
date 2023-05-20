@@ -40,7 +40,7 @@ def record_audio():
     channels = 1
     sample_rate = 44100
     record_seconds = 3
-    micro_index = 7
+    micro_index =1 
     p = pyaudio.PyAudio()
     # open stream object as input & output
     stream = p.open(format=FORMAT, channels=channels, rate=sample_rate, input=True, frames_per_buffer=chunk, input_device_index=micro_index)
@@ -70,8 +70,10 @@ def speech_to_text(audio):
         return r.recognize_google(audio, language="vi")
     except sr.UnknownValueError:
         print("Could not understand audio")
+        return None
     except sr.RequestError as e:
         print("Could not request results; {0}".format(e))
+        return None
 
 def text_to_speech(msg):
     audio = gTTS(msg, lang="vi")

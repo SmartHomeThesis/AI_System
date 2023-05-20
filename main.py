@@ -21,7 +21,7 @@ from voice_bot.physical import (setDevice1, setDevice2)
 config = dotenv_values(".env")
 AIO_KEY = config.get('AIO_KEY')
 AIO_USERNAME = config.get('AIO_USERNAME')
-AIO_FEED_DEVICE = ["smart-home.temperature", "smart-home.humidity", "smart-home.light-livingroom", "smart-home.fan-livingroom", "smart-home.light-bedroom", "smart-home.door", "smart-home.face-recognition"]
+AIO_FEED_DEVICE = ["smart-home.temperature", "smart-home.humidity", "smart-home.light-livingroom", "smart-home.light-bedroom", "smart-home.door", "smart-home.face-recognition"]
 
 
 def connected(client):
@@ -38,7 +38,12 @@ def message(client, feed_id, payload):
         if payload == "0":
             setDevice1(False, ser)
         if payload == "1":
-            setDevice1(True, ser)        
+            setDevice1(True, ser)      
+    if feed_id == AIO_FEED_DEVICE[4]:   
+        if payload == "0":
+            setDevice1(False, ser)
+        if payload == "1":
+            setDevice1(True, ser)       
 
 def disconnected():
     sys.exit(1)
@@ -60,16 +65,22 @@ fr = FaceRecognition()
 
 
 def control_device(msg):
-    if "đèn" in msg:
-        if "tắt" in msg:
-            client.publish("smart-home.light", 0)
+    if "khách" in msg:
+        if "tắt" in msg and "đèn" in msg:
+            client.publish("smart-home.light-bedroom", 0)
         else:
-            client.publish("smart-home.light", 1)
-    else:
-        if "mở" in msg:
-            client.publish("smart-home.door", 1)
+            client.publish("smart-home.light-bedroom", 1)
+    elif "ngủ":
+        if "tắt" in msg and "đèn" in msg:
+            client.publish("smart-home.light-livingroom", 0)
         else:
+            client.publish("smart-home.light-livingroom", 1)
+    else:      
+        if "đóng":
             client.publish("smart-home.door", 0)
+        else:
+            client.publish("smart-home.door", 1)
+
 
 
 def run_voice_bot():
@@ -84,21 +95,25 @@ def run_voice_bot():
         record_audio()
         username = test_model("user.wav")
         user_message = speech_to_text("user.wav")
+        
+        if user_message is None:
+            user_message = "None"
+
+        user_message = user_message.lower()
         os.remove("user.wav")
-        print(username + ": {}".format(user_message))
 
         # username = "Hanh"
         # user_message = "Hà Nội thời tiết như thế nào"
 
         if user_message is not None:
-            if "Mở" in user_message or "Đóng" in user_message or "Tắt" in user_message and username != "Unknown":
+            if "bật" in user_message or "mở" in user_message or "đóng" in user_message or "tắt" in user_message and username != "Unknown":
                 print(username + ": {}".format(user_message))
                 start = time.time()
                 user = json.loads(urllib.request.urlopen(f"https://backend-production-a7e0.up.railway.app/api/utils/user-permission/{username}").read())
                 if user["permission"]:
                     for permission in user["permission"]:
                         if permission.lower() in user_message or user["permission"] == "All":
-                            control_device(user_message)
+                            control_device(user_message.lower())
                             end = time.time()
                             print(end-start)
                             break
@@ -152,6 +167,6 @@ def handle_AI():
             exit()
 
 
-if __name__ == '__main__':
-    handle_AI()
-# run_voice_bot()
+# if __name__ == '__main__':
+#     handle_AI()
+run_voice_bot()
