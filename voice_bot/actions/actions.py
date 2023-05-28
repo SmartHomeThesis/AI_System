@@ -2,10 +2,8 @@ from typing import Any, Dict, List, Text
 
 import arrow
 import requests
-from geopy.geocoders import Nominatim
 from rasa_sdk import Action
 from rasa_sdk.events import SlotSet
-from timezonefinder import TimezoneFinder
 
 
 class ActionGetWeather(Action):
@@ -45,12 +43,12 @@ class ActionTellTime(Action):
             dispatcher.utter_message(text=msg)
             return []
         
-        geolocator = Nominatim(user_agent="geoapiExercises")
-        location = geolocator.geocode(current_place)
+        # geolocator = Nominatim(user_agent="geoapiExercises")
+        # location = geolocator.geocode(current_place)
         
-        obj = TimezoneFinder()
-        result = obj.timezone_at(lng=location.longitude, lat=location.latitude)
-        print("Time Zone : ", result)
+        # obj = TimezoneFinder()
+        # result = obj.timezone_at(lng=location.longitude, lat=location.latitude)
+        # print("Time Zone : ", result)
 
         # tz_string = city_db.get(current_place, None)
         # if not tz_string:

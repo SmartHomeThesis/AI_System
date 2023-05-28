@@ -39,14 +39,14 @@ def record_audio():
     FORMAT = pyaudio.paInt16
     channels = 1
     sample_rate = 44100
-    record_seconds = 3
+    record_seconds = 5
     micro_index = 1 
     p = pyaudio.PyAudio()
     # open stream object as input & output
     stream = p.open(format=FORMAT, channels=channels, rate=sample_rate, input=True, frames_per_buffer=chunk, input_device_index=micro_index)
     frames = []
 
-    text_to_speech("Bạn cần giúp gì")
+    print("SPEAKING")
     for i in range(0, int(sample_rate / chunk * record_seconds)):
         data = stream.read(chunk)
         frames.append(data)
@@ -61,11 +61,21 @@ def record_audio():
     wf.writeframes(b"".join(frames))
     wf.close()
 
+def listening():
+    r = sr.Recognizer() 
+
+    with sr.Microphone() as source:                  
+        audio = r.record(source, duration=2)   
+    try:
+        return r.recognize_google(audio, language="vi")
+    except sr.UnknownValueError or sr.RequestError:
+        return None
+
 def speech_to_text(audio):
     r = sr.Recognizer() 
-                                                                        
+
     with sr.AudioFile(audio) as source:                  
-        audio = r.record(source, duration=3)   
+        audio = r.record(source, duration=5)   
     try:
         return r.recognize_google(audio, language="vi")
     except sr.UnknownValueError or sr.RequestError:

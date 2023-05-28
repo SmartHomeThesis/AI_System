@@ -5,6 +5,7 @@ import wave
 import numpy as np
 import pyaudio
 import python_speech_features as mfcc
+from datetime import datetime
 from scipy.io.wavfile import read
 from sklearn import preprocessing
 from sklearn.mixture import GaussianMixture
@@ -35,7 +36,7 @@ def extract_features(audio, rate):
     mfcc_feature = mfcc.mfcc(audio, rate, 0.025, 0.01, 20, nfft = 1200, appendEnergy = True)    
     mfcc_feature = preprocessing.scale(mfcc_feature)
     delta = calculate_delta(mfcc_feature)
-    combined = np.hstack((mfcc_feature,delta))
+    combined = np.hstack((mfcc_feature, delta)) # type: ignore
     return combined
 
 def record_sample(name):
@@ -44,7 +45,7 @@ def record_sample(name):
         CHANNELS = 1
         RATE = 44100
         CHUNK = 1024
-        RECORD_SECONDS = 5
+        RECORD_SECONDS = 15
         audio = pyaudio.PyAudio()		
         stream = audio.open(format=FORMAT, channels=CHANNELS, rate=RATE, input=True, output=True, frames_per_buffer=CHUNK)
 
@@ -59,7 +60,7 @@ def record_sample(name):
         stream.close()
         audio.terminate()
 
-        OUTPUT_FILENAME = name + "-sample" + str(count) + ".wav"
+        OUTPUT_FILENAME = name + "-" + str(count) + ".wav"
         WAVE_OUTPUT_FILENAME = os.path.join("training_data/voice/" + name, OUTPUT_FILENAME)
 
         waveFile = wave.open(WAVE_OUTPUT_FILENAME, 'wb')
@@ -70,16 +71,16 @@ def record_sample(name):
         waveFile.close()    
 
 def train_model():
-    src = os.listdir('D:\Smart-Device-Controller-System\\training_data\\voice')
+    src = os.listdir('C:\\Users\\nuc\\Desktop\\Smart-Device-DT\\AI_System\\training_data\\voice\\')
     dest = "models/voice/"
 
     count = 1
     features = np.asarray(())
 
     for (i, path) in enumerate(src): 
-        sub_src = os.listdir('D:\Smart-Device-Controller-System\\training_data\\voice\\'+path)
+        sub_src = os.listdir('C:\\Users\\nuc\\Desktop\\Smart-Device-DT\\AI_System\\training_data\\voice\\'+path)
         for (j, sub_path) in enumerate(sub_src):
-            sr, audio = read('D:\Smart-Device-Controller-System\\training_data\\voice\\'+path+'\\'+sub_path)
+            sr, audio = read('C:\\Users\\nuc\\Desktop\\Smart-Device-DT\\AI_System\\training_data\\voice\\'+path+'\\'+sub_path)
 
             vector = extract_features(audio, sr)
             
@@ -88,7 +89,7 @@ def train_model():
             else:
                 features = np.vstack((features, vector))
 
-            if count == 8:    
+            if count == 15:    
                 gmm = GaussianMixture(n_components=6, max_iter=200, covariance_type='diag', n_init=3)
                 gmm.fit(features)
                 
@@ -121,18 +122,17 @@ def test_model(audio):
          
     winner_score = np.max(log_likelihood)   
     print(winner_score)
-    if winner_score <= -26.5:
+    if winner_score <= -27:
         return "Unknown"
     winner = np.argmax(log_likelihood)
     winner_name = speakers[winner][13:]
     return winner_name
 
 def evaluate_model():
-    test_data = os.listdir('D:\Smart-Device-Controller-System\\testing_data\\voice')
+    test_data = os.listdir('D:\\Smart-Device-Controller-System\\testing_data\\voice')
     
     for (i, path) in enumerate(test_data): 
-        sub_src = os.listdir('D:\Smart-Device-Controller-System\\testing_data\\voice\\'+path)
+        sub_src = os.listdir('D:\\Smart-Device-Controller-System\\testing_data\\voice\\'+path)
         for (j, sub_path) in enumerate(sub_src):
-            print("Data: " + path + ", Label: " + test_model('D:\Smart-Device-Controller-System\\testing_data\\voice\\'+path+'\\'+sub_path))
-
+            print("Data: " + path + ", Label: " + test_model('D:\\Smart-Device-Controller-System\\testing_data\\voice\\'+path+'\\'+sub_path))
 
