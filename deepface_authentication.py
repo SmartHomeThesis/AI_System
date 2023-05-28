@@ -18,7 +18,7 @@ def face_confidence(face_distance, face_match_threshold=0.6):
     # else:
     #     value = (linear_val + ((1.0 - linear_val) * math.pow((linear_val - 0.5) * 2, 0.2))) * 100
     #     return str(round(value, 2)) + '%'
-    return round(1-face_distance, 2)*100
+    return round(10-face_distance, 2)*10
 
 
 class FaceRecognition:
@@ -148,26 +148,26 @@ class FaceRecognition:
                     (startX, startY, endX, endY) = box.astype("int")
                     cv2.rectangle(frame, (startX, startY), (endX, endY), (0, 255, 0), 2)
                     response = DeepFace.find(img_path=frame, db_path=self.db_path, model_name=self.models[1],
-                                             distance_metric = self.metrics[0]
+                                             distance_metric = self.metrics[1]
                                              , silent=True, enforce_detection=False, detector_backend='opencv')
                     print('response', response)
-                    if len(response[0]) != 0:
-                        df = pd.DataFrame(response[0])
-                        accuracy =  face_confidence(df['Facenet_cosine'][0])
+                    accuracy = 0
+                    df = pd.DataFrame(response[0])
+                    if df.shape[0] > 0:
+                        accuracy =  face_confidence(df['Facenet_euclidean'][0])
                         path_name_image = df['identity'][0]
                         dirpath, filename = os.path.split(path_name_image)
                         parts = dirpath.split("\\")  # Use backslash as separator
                         name_detected = parts[-1]  # Last part contains the name
-            print("NAME_Dectect", name_detected, accuracy)
-            if name_detected != "Unknown":
-                cv2.putText(frame," " + name_detected + str(accuracy) + '%', (endX -10, endY), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (36, 255, 12),
-                            2)
-            elif name_detected == "Unknown" and confidence > 0.5:
-                cv2.putText(frame, name_detected, (endX -10, endY), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 0, 255), 2)
+                    if name_detected != "Unknown":
+                        cv2.putText(frame,name_detected + " " + str(round(accuracy,2)) + '%', (startX,startY-10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (36, 255, 12),
+                                2)
+                    elif name_detected == "Unknown":
+                        cv2.putText(frame, name_detected, (startX, startY  -10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 0, 255), 2)
+                    print("NAME_Dectect", name_detected, accuracy)
             cv2.imshow("Face", frame)
-
-            # time.sleep(3)
             if cv2.waitKey(1) & 0xFF == ord('q'):
+                print("Closing program ................")
                 break
         cv2.destroyAllWindows()
         cap.release()
@@ -186,9 +186,11 @@ while True:
         fr.take_picture(name)
     if (user_choice == 2):
         fr.run_recognition()
+
 # Test the model
-# response = DeepFace.find(img_path="faces/test/0.jpg",db_path="training_data/face", model_name="Facenet", distance_metric="cosine", enforce_detection=False,detector_backend="mtcnn")
+# response = DeepFace.find(img_path="faces/test/Hanh.png",db_path="training_data/face", model_name="Facenet", distance_metric="euclidean", enforce_detection=False,detector_backend="mtcnn")
+# print("response", response)
 # response = DeepFace.verify(img1_path="faces/test/Nam.png",img2_path="training_data/face/Nam/1.png", model_name="Facenet", distance_metric="cosine", enforce_detection=False,detector_backend="mtcnn")
-# columns = ['identity', 'source_x', 'source_y', 'source_w', 'source_h', 'Facenet_cosine']
+# columns = ['identity', 'source_x', 'source_y', 'source_w', 'source_h', 'Facenet_euclidean']
 # df = pd.DataFrame(response[0], columns=columns)
 # print(df)
