@@ -2,10 +2,8 @@ from typing import Any, Dict, List, Text
 
 import arrow
 import requests
-from geopy.geocoders import Nominatim
 from rasa_sdk import Action
 from rasa_sdk.events import SlotSet
-from timezonefinder import TimezoneFinder
 
 
 class ActionGetWeather(Action):
@@ -36,32 +34,28 @@ class ActionTellTime(Action):
     def name(self) -> Text:
         return "action_tell_time"
 
-    def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
-        current_place = next(tracker.get_latest_entity_values("place"), None)
-        utc = arrow.utcnow()
-        
-        if not current_place:
-            msg = f"Bây giờ là {utc.to('Asia/Hanoi').format('HH:mm')} phút."
-            dispatcher.utter_message(text=msg)
-            return []
-        
-        geolocator = Nominatim(user_agent="geoapiExercises")
-        location = geolocator.geocode(current_place)
-        
-        obj = TimezoneFinder()
-        result = obj.timezone_at(lng=location.longitude, lat=location.latitude)
-        print("Time Zone : ", result)
-
-        # tz_string = city_db.get(current_place, None)
-        # if not tz_string:
-        #     msg = f"Tôi không tìm thấy {current_place}. Bạn có chắc về sự tồn tại của nơi này không?"
-        #     dispatcher.utter_message(text=msg)
-        #     return []
-                
-        msg = f"Bây giờ là {utc.to(result).format('HH:mm')} ở {current_place}."
-        dispatcher.utter_message(text=msg)
-        
-        return []
+    # def run(self, dispatcher, tracker, domain) -> List[Dict[Text, Any]]:
+    #     current_place = next(tracker.get_latest_entity_values("place"), None)
+    #     utc = arrow.utcnow()
+    #
+    #     if not current_place:
+    #         msg = f"Bây giờ là {utc.to('Asia/Hanoi').format('HH:mm')} phút."
+    #         dispatcher.utter_message(text=msg)
+    #         return []
+    #
+    #
+    #
+    #
+    #     tz_string = city_db.get(current_place, None)
+    #     if not tz_string:
+    #         msg = f"Tôi không tìm thấy {current_place}. Bạn có chắc về sự tồn tại của nơi này không?"
+    #         dispatcher.utter_message(text=msg)
+    #         return []
+    #
+    #     msg = f"Bây giờ là {utc.to(result).format('HH:mm')} ở {current_place}."
+    #     dispatcher.utter_message(text=msg)
+    #
+    #     return []
 
 class ActionControlDevice(Action):
 

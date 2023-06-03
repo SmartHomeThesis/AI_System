@@ -1,4 +1,7 @@
 import os
+
+from matplotlib import pyplot as plt
+
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 from deepface import DeepFace
 from deepface.basemodels import Facenet
@@ -8,43 +11,47 @@ import numpy as np
 import pandas as pd
 import math
 
-
+# result = DeepFace.verify("training_data/face/Hanh/3.png","training_data/face/Nam/4.png",enforce_detection=False,model_name="Facenet")
+# print(result)
 def face_confidence(face_distance, face_match_threshold=0.6):
-    # range = (1.0 - face_match_threshold)
-    # linear_val = (1.0 - face_distance) / (range * 2.0)
-    #
-    # if face_distance > face_match_threshold:
-    #     return str(round(linear_val * 100, 2)) + '%'
-    # else:
-    #     value = (linear_val + ((1.0 - linear_val) * math.pow((linear_val - 0.5) * 2, 0.2))) * 100
-    #     return str(round(value, 2)) + '%'
-    return round(10-face_distance, 2)*10
-
-
+    return round(10 - face_distance, 2)*10
 class FaceRecognition:
     cnt = 0
+    color_bgr = {
+    'green': (0, 255, 0),
+    'red': (0, 0, 255),
+    'blue': (255, 0, 0),
+    }
     new_frame_time = 0
-    models = [
-        "VGG-Face",
-        "Facenet",
-        "Facenet512",
-        "OpenFace",
-        "DeepFace",
-        "DeepID",
-        "ArcFace",
-        "Dlib",
-        "SFace",
-    ]
-    detectors = [
-        "opencv",
-        "ssd",
-        "dlib",
-        "mtcnn",
-        "retinaface",
-    ]
-    metrics = ["cosine", "euclidean", "euclidean_l2"]
+    # models = [
+    #     "VGG-Face",
+    #     "Facenet",
+    #     "Facenet512",
+    #     "OpenFace",
+    #     "DeepFace",
+    #     "DeepID",
+    #     "ArcFace",
+    #     "Dlib",
+    #     "SFace",
+    # ]
+    models = {
+        "default": "Facenet",
+    }
+    # detectors = [
+    #     "opencv",
+    #     "mtcnn",
+    #     "ssd",
+    #     "dlib",
+    #     "retinaface",
+    # ]
+    detectors = {
+        "default": "opencv",
+    }
+    # metrics = ["cosine", "euclidean", "euclidean_l2"]
+    metrics = {
+        "default": "euclidean",
+    }
     db_path = "training_data/face"
-    model = Facenet.loadModel()
 
     def take_picture(self, name):
         flag = True
@@ -60,7 +67,7 @@ class FaceRecognition:
                     os.remove(f'training_data/face/{name}/{f}')
                 os.rmdir(f'training_data/face/{name}')
         cam = cv2.VideoCapture(0, cv2.CAP_DSHOW)
-        img_counter = 1
+        img_counter = 0
         cv2.namedWindow("Take the picture", cv2.WINDOW_NORMAL)
         cam.set(3, 640)
         cam.set(4, 480)
@@ -92,7 +99,7 @@ class FaceRecognition:
                     # crop_image = frame[startY:endY, startX:endX]
                 # Display the FPS on the frame
             cv2.putText(frame, "FPS: {:.2f}".format(fps), (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
-
+            cv2.putText(frame,  str(img_counter) + "Pic", (10, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
             cv2.imshow("Take the picture", frame)
             k = cv2.waitKey(1)
             if k == ord('q'):
@@ -107,18 +114,17 @@ class FaceRecognition:
                 cv2.imwrite(img_name, frame)
                 print("{} written!".format(img_name[19:]))
                 img_counter += 1
-                if img_counter == 6:
+                if img_counter == 10:
                     break
 
         cam.release()
         cv2.destroyAllWindows()
 
     def train_model(self):
-
-        print("Training DeepFace...")
-        # using method represent to train and save to pkl file
-        embedding_objs = DeepFace.represent("training_data/face", model_name="Facenet")
-        print(embedding_objs)
+        if os.path.exists('training_data/face/representations_deepface.pkl'):
+            os.remove('training_data/face/representations_deepface.pkl')
+        DeepFace.find(img_path="faces/test/Nam.png", db_path="training_data/face", model_name=self.models['default'], distance_metric=self.metrics['default'], detector_backend=self.detectors['default'], enforce_detection=False)
+        print("Training completed")
 
     def run_recognition(self):
         cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)  # video capture source camera (Here webcam of laptop)
@@ -146,24 +152,35 @@ class FaceRecognition:
                     box = detections[0, 0, i, 3:7] * np.array(
                         [frame.shape[1], frame.shape[0], frame.shape[1], frame.shape[0]])
                     (startX, startY, endX, endY) = box.astype("int")
-                    cv2.rectangle(frame, (startX, startY), (endX, endY), (0, 255, 0), 2)
-                    response = DeepFace.find(img_path=frame, db_path=self.db_path, model_name=self.models[1],
-                                             distance_metric = self.metrics[1]
-                                             , silent=True, enforce_detection=False, detector_backend='opencv')
+                    response = DeepFace.find(img_path=frame, db_path=self.db_path, model_name=self.models['default'],
+                                             distance_metric = self.metrics['default']
+                                             , silent=True, enforce_detection=False, detector_backend=self.detectors['default'])
                     print('response', response)
                     accuracy = 0
                     df = pd.DataFrame(response[0])
+                    print("df.shape", df.shape[0])
                     if df.shape[0] > 0:
                         accuracy =  face_confidence(df['Facenet_euclidean'][0])
                         path_name_image = df['identity'][0]
                         dirpath, filename = os.path.split(path_name_image)
                         parts = dirpath.split("\\")  # Use backslash as separator
                         name_detected = parts[-1]  # Last part contains the name
-                    if name_detected != "Unknown":
-                        cv2.putText(frame,name_detected + " " + str(round(accuracy,2)) + '%', (startX,startY-10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (36, 255, 12),
-                                2)
-                    elif name_detected == "Unknown":
-                        cv2.putText(frame, name_detected, (startX, startY  -10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 0, 255), 2)
+                        if name_detected == "Unknown" or accuracy < 50 :
+                            print("case 1")
+                            cv2.rectangle(frame, (startX, startY), (endX, endY), self.color_bgr['red'], 2)
+                            cv2.putText(frame, "Unknown", (startX, endY + 23), cv2.FONT_HERSHEY_SIMPLEX, 0.9, self.color_bgr['red'], 2)
+                        elif name_detected != "Unknown" and accuracy > 50:
+                            print("case 2")
+                            cv2.rectangle(frame, (startX, startY), (endX, endY),self.color_bgr['green'], 2)
+                            cv2.putText(frame,name_detected + " " + str(round(accuracy,2)) + '%', (startX, endY + 23), cv2.FONT_HERSHEY_SIMPLEX, 0.9, self.color_bgr['green'],
+                                     2)
+                    elif name_detected == "Unknown" or accuracy < 50 :
+                        print("case 3")
+                        cv2.rectangle(frame, (startX, startY), (endX, endY), self.color_bgr['red'], 2)
+                        cv2.putText(frame, "Unknown", (startX, endY + 23), cv2.FONT_HERSHEY_SIMPLEX, 0.9, self.color_bgr['red'], 2)
+                    else:
+                        print("case 4")
+                        cv2.rectangle(frame, (startX, startY), (endX, endY),self.color_bgr['green'], 2)
                     print("NAME_Dectect", name_detected, accuracy)
             cv2.imshow("Face", frame)
             if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -184,13 +201,12 @@ while True:
     if (user_choice == 1):
         name = input("Enter your name: ")
         fr.take_picture(name)
+        print("Training DeepFace...")
+        fr.train_model()
     if (user_choice == 2):
         fr.run_recognition()
-
-# Test the model
-# response = DeepFace.find(img_path="faces/test/Hanh.png",db_path="training_data/face", model_name="Facenet", distance_metric="euclidean", enforce_detection=False,detector_backend="mtcnn")
-# print("response", response)
-# response = DeepFace.verify(img1_path="faces/test/Nam.png",img2_path="training_data/face/Nam/1.png", model_name="Facenet", distance_metric="cosine", enforce_detection=False,detector_backend="mtcnn")
-# columns = ['identity', 'source_x', 'source_y', 'source_w', 'source_h', 'Facenet_euclidean']
-# df = pd.DataFrame(response[0], columns=columns)
-# print(df)
+    if (user_choice == 3):
+        fr.train_model()
+    else:
+        print("Please enter again!")
+#

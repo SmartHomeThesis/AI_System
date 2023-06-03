@@ -39,14 +39,13 @@ def record_audio():
     FORMAT = pyaudio.paInt16
     channels = 1
     sample_rate = 44100
-    record_seconds = 3
+    record_seconds = 5
     micro_index = 1 
     p = pyaudio.PyAudio()
     # open stream object as input & output
     stream = p.open(format=FORMAT, channels=channels, rate=sample_rate, input=True, frames_per_buffer=chunk, input_device_index=micro_index)
     frames = []
 
-    text_to_speech("Bạn cần giúp gì")
     for i in range(0, int(sample_rate / chunk * record_seconds)):
         data = stream.read(chunk)
         frames.append(data)

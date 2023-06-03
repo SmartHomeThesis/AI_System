@@ -78,7 +78,7 @@ def control_device(msg):
 
 
 def run_voice_bot():
-    text_to_speech("Cozy xin chào")
+    # text_to_speech("Cozy xin chào")
     
     bot_message = ""
     while bot_message != "Tạm biệt":
@@ -88,20 +88,24 @@ def run_voice_bot():
         username = test_model("user.wav")
         user_message = "None" if speech_to_text("user.wav") is None else speech_to_text("user.wav").lower()
         os.remove("user.wav")
-    
+
+
+
         print(username + ": {}".format(user_message))
        
         if username != "Unknown" and user_message != "None":
             if "bật" in user_message or "mở" in user_message or "đóng" in user_message or "tắt" in user_message:
-                domain = "https://backend-production-a7e0.up.railway.app"
+                domain = "https://backend-production-0a8c.up.railway.app"
                 permission = urllib.request.urlopen(f"{domain}/api/utils/user-permission/{username}").read()
                 user = json.loads(permission)
 
                 if user["permission"]:
                     for permission in user["permission"]:
+                        print("permission: ", permission)
                         if permission.lower() in user_message or user["permission"] == "All":
                             control_device(user_message)
-                            break
+                        else:
+                            text_to_speech("Không thể thực hiện hành động này")
                 else:
                     text_to_speech("Không thể thực hiện hành động này")
             else:
@@ -151,4 +155,4 @@ def handle_AI():
 
 
 if __name__ == '__main__':
-    handle_AI()
+    run_voice_bot()
