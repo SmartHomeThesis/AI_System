@@ -2,7 +2,7 @@ version: "3.1"
 
 intents:
   - weather
-  - weather_city
+  - inquire_weather
   - city
   - inquire_time
   - control_device
@@ -14,7 +14,7 @@ intents:
   - mood_unhappy
 
 actions:
-  - action_get_weather  
+  - action_tell_weather  
   - action_tell_time
   - action_control_device   
 
@@ -46,20 +46,17 @@ slots:
         entity: command          
 
 responses:
-  utter_ask_location:
-  - text: "For which city?"
-
   utter_greet:
-  - text: "Hey! How are you?"
+  - text: "Bạn khỏe chứ?"
 
   utter_did_that_help:
-  - text: "Did that help you?"
+  - text: "Bạn cần giúp gì?"
 
   utter_happy:
-  - text: "Great, carry on!"
+  - text: "Tuyệt vời"
 
   utter_goodbye:
-  - text: "Bye"
+  - text: "Tạm biệt"
 
 session_config:
   session_expiration_time: 60

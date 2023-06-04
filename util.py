@@ -1,7 +1,8 @@
 import os
 import time
 import wave
-import playsound
+from playsound import playsound
+import pyttsx3
 
 import pyaudio
 import serial.tools.list_ports
@@ -39,14 +40,12 @@ def record_audio():
     FORMAT = pyaudio.paInt16
     channels = 1
     sample_rate = 44100
-    record_seconds = 3
-    micro_index =1 
+    record_seconds = 5
     p = pyaudio.PyAudio()
     # open stream object as input & output
-    stream = p.open(format=FORMAT, channels=channels, rate=sample_rate, input=True, frames_per_buffer=chunk, input_device_index=micro_index)
+    stream = p.open(format=FORMAT, channels=channels, rate=sample_rate, input=True, frames_per_buffer=chunk, input_device_index=2)
     frames = []
 
-    print("Listening...")
     for i in range(0, int(sample_rate / chunk * record_seconds)):
         data = stream.read(chunk)
         frames.append(data)
@@ -61,23 +60,49 @@ def record_audio():
     wf.writeframes(b"".join(frames))
     wf.close()
 
-def speech_to_text(audio):
+def listening():
     r = sr.Recognizer() 
-                                                                        
-    with sr.AudioFile(audio) as source:                  
-        audio = r.record(source, duration=3)   
+
+    with sr.Microphone() as source:                  
+        audio = r.record(source, duration=2)   
     try:
         return r.recognize_google(audio, language="vi")
-    except sr.UnknownValueError:
-        print("Could not understand audio")
+    except sr.UnknownValueError or sr.RequestError:
         return None
-    except sr.RequestError as e:
-        print("Could not request results; {0}".format(e))
+
+def speech_to_text(audio):
+    r = sr.Recognizer() 
+
+    with sr.AudioFile(audio) as source:  
+        r.adjust_for_ambient_noise(source)                 
+        audio = r.record(source, duration=5)   
+    try:
+        return r.recognize_google(audio, language="vi")
+    except sr.UnknownValueError or sr.RequestError:
         return None
 
 def text_to_speech(msg):
-    audio = gTTS(msg, lang="vi")
-    audio.save("audio.mp3")
-    playsound.playsound("audio.mp3")
-    os.remove("audio.mp3")
+    engine = pyttsx3.init()
+    voices = engine.getProperty('voices')
+    engine.setProperty("rate", 140)
+    engine.setProperty('voice', "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\MSTTS_V110_viVN_An")
+    engine.say(msg)
+    engine.runAndWait()
+    engine.stop()
 
+relay1_ON  = [15, 6, 0, 0, 0, 255, 200, 164]
+relay1_OFF = [15, 6, 0, 0, 0, 0, 136, 228]
+def setDevice1(state, ser):
+    if state == True:
+        ser.write(relay1_ON)
+    else:
+        ser.write(relay1_OFF)
+
+relay2_ON  = [0, 6, 0, 0, 0, 255, 200, 91]
+relay2_OFF = [0, 6, 0, 0, 0, 0, 136, 27]
+def setDevice2(state, ser):
+    if state == True:
+        print("BUG")
+        ser.write(relay2_ON)
+    else:
+        ser.write(relay2_OFF)

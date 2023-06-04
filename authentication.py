@@ -39,7 +39,7 @@ class FaceRecognition:
     known_face_names = []
     process_current_frame = True
 
-    def take_picture(self, name):
+    def take_picture(self, name="Phuoc"):
         flag = True
         while flag:
             # Create folder to  save images from user input
@@ -48,8 +48,9 @@ class FaceRecognition:
                 flag = False
             else:
                 print("Name already exists. Please try again ................")
+                return
 
-        cam = cv2.VideoCapture(0)
+        cam = cv2.VideoCapture(0,cv2.CAP_DSHOW)
         img_counter = 1
         cv2.namedWindow("Take the picture", cv2.WINDOW_NORMAL)
         cam.set(3,640)
@@ -118,9 +119,9 @@ class FaceRecognition:
 
             # detect the (x, y)-coordinates of the bounding boxes
             # corresponding to each face in the input image
-            boxes = face_recognition.face_locations(rgb, model=args["detection_method"])
+            boxes = facerecognition.face_locations(rgb, model=args["detection_method"])
             # compute the facial embedding for the face
-            encodings = face_recognition.face_encodings(rgb, boxes)
+            encodings = facerecognition.face_encodings(rgb, boxes)
             # loop over the encodings
             for encoding in encodings:
                 # add each encoding + name to our set of known names and
@@ -139,6 +140,7 @@ class FaceRecognition:
         data = pickle.loads(open(args["encodings"], "rb").read())
         video_capture.set(3, 640)
         video_capture.set(4, 480)
+        video_capture.set(cv2.CAP_PROP_CONVERT_RGB, 1)
         if not video_capture.isOpened():
             sys.exit('Video source not found...')
         # used to record the time when we processed last frame
@@ -157,10 +159,10 @@ class FaceRecognition:
             cv2.putText(frame, "FPS: {:.2f}".format(fps), (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
             if self.process_current_frame:
                 # Resize frame of video to 1/4 size for faster face recognition processing
-                small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
+                rgb_small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
 
                 # Convert the image from BGR color (which OpenCV uses) to RGB color (which face_recognition uses)
-                rgb_small_frame = small_frame[:, :, ::-1]
+                # rgb_small_frame = small_frame[:, :, ::-1]
 
                 # Find all the faces and face encodings in the current frame of video
                 self.face_locations = face_recognition.face_locations(rgb_small_frame,model=args["detection_method"])
@@ -217,4 +219,4 @@ class FaceRecognition:
 
         # Release handle to the webcam
         video_capture.release()
-        cv2.destroyAllWindows()
+        cv2.destroyAllWindows()  
