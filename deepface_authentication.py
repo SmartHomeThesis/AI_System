@@ -130,6 +130,7 @@ class FaceRecognition:
         cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)  # video capture source camera (Here webcam of laptop)
         # cap = cv2.VideoCapture(0, cv2.CAP_DSHOW) # Using in NUC
         prev_frame_time = 0
+
         while (True):
             ret, frame = cap.read()
             new_frame_time = time.time()
@@ -209,4 +210,3 @@ while True:
         fr.train_model()
     else:
         print("Please enter again!")
-#
