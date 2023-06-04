@@ -89,8 +89,8 @@ def train_model():
             else:
                 features = np.vstack((features, vector))
 
-            if count == 15:    
-                gmm = GaussianMixture(n_components=6, max_iter=200, covariance_type='diag', n_init=3)
+            if count == 5:    
+                gmm = GaussianMixture(n_components=27, max_iter=200, covariance_type='diag', n_init=3)
                 gmm.fit(features)
                 
                 # dumping the trained gaussian model
@@ -121,11 +121,11 @@ def test_model(audio):
         log_likelihood[i] = scores.sum()
          
     winner_score = np.max(log_likelihood)   
-    print(winner_score)
+    winner = np.argmax(log_likelihood)
     if winner_score <= -27:
         return "Unknown"
-    winner = np.argmax(log_likelihood)
     winner_name = speakers[winner][13:]
+    print(winner_name, winner_score, winner)
     return winner_name
 
 def evaluate_model():
@@ -135,4 +135,5 @@ def evaluate_model():
         sub_src = os.listdir('D:\\Smart-Device-Controller-System\\testing_data\\voice\\'+path)
         for (j, sub_path) in enumerate(sub_src):
             print("Data: " + path + ", Label: " + test_model('D:\\Smart-Device-Controller-System\\testing_data\\voice\\'+path+'\\'+sub_path))
+
 

@@ -3,7 +3,7 @@ import os
 import sys
 from urllib import request, parse
 
-
+import random
 import requests
 import keyboard
 from Adafruit_IO import MQTTClient
@@ -15,48 +15,48 @@ from speaker_verification import record_sample, test_model, train_model
 from util import *
 
 
-# Declare Adafruit IO components - Start
-config = dotenv_values(".env")
+# # Declare Adafruit IO components - Start
+# config = dotenv_values(".env")
 domain = "https://backend-production-0a8c.up.railway.app"
-AIO_KEY = config.get('AIO_KEY')
-AIO_USERNAME = config.get('AIO_USERNAME')
-AIO_FEED_DEVICE = ["smart-home.temperature", "smart-home.humidity", "smart-home.light-livingroom", "smart-home.light-bedroom", "smart-home.door", "smart-home.face-recognition"]
+# AIO_KEY = config.get('AIO_KEY')
+# AIO_USERNAME = config.get('AIO_USERNAME')
+# AIO_FEED_DEVICE = ["smart-home.temperature", "smart-home.humidity", "smart-home.light-livingroom", "smart-home.light-bedroom", "smart-home.door", "smart-home.face-recognition"]
 
 
-def connected(client):
-    for feed in AIO_FEED_DEVICE:
-        client.subscribe(feed)
+# def connected(client):
+#     for feed in AIO_FEED_DEVICE:
+#         client.subscribe(feed)
 
-def message(client, feed_id, payload):
-    # Connect to USB port 
-    ser = getPort() 
-    if feed_id == AIO_FEED_DEVICE[2]:
-        if payload == "0":
-            setDevice2(False, ser)
-        if payload == "1":
-            setDevice2(True, ser)
-    elif feed_id == AIO_FEED_DEVICE[3]:
-        if payload == "0":
-            setDevice1(False, ser)
-        if payload == "1":
-            setDevice1(True, ser)      
-    elif feed_id == AIO_FEED_DEVICE[4]:   
-        if payload == "0":
-            setDevice1(False, ser)
-        if payload == "1":
-            setDevice1(True, ser)       
+# def message(client, feed_id, payload):
+#     # Connect to USB port 
+#     ser = getPort() 
+#     if feed_id == AIO_FEED_DEVICE[2]:
+#         if payload == "0":
+#             setDevice2(False, ser)
+#         if payload == "1":
+#             setDevice2(True, ser)
+#     elif feed_id == AIO_FEED_DEVICE[3]:
+#         if payload == "0":
+#             setDevice1(False, ser)
+#         if payload == "1":
+#             setDevice1(True, ser)      
+#     elif feed_id == AIO_FEED_DEVICE[4]:   
+#         if payload == "0":
+#             setDevice1(False, ser)
+#         if payload == "1":
+#             setDevice1(True, ser)       
 
-def disconnected():
-    sys.exit(1)
+# def disconnected():
+#     sys.exit(1)
 
 
-client = MQTTClient(AIO_USERNAME, AIO_KEY)
-client.on_connect = connected # type: ignore
-client.on_disconnect = disconnected # type: ignore
-client.on_message = message # type: ignore
-client.connect()
-client.loop_background()
-# Declare Adafruit IO components - End
+# client = MQTTClient(AIO_USERNAME, AIO_KEY)
+# client.on_connect = connected # type: ignore
+# client.on_disconnect = disconnected # type: ignore
+# client.on_message = message # type: ignore
+# client.connect()
+# client.loop_background()
+# # Declare Adafruit IO components - End
 
 
 def control_device(msg):
@@ -83,20 +83,20 @@ def run_voice_bot():
 
     while bot_message != "Tạm biệt":
         bot_message = ""  
-        
+        print(random.randint(1,10)) # type: ignore
         try: 
             r = sr.Recognizer()
             with sr.Microphone() as mic:     
                 r.adjust_for_ambient_noise(mic, duration=0.2)              # type: ignore
                 audio = r.listen(mic)   
-                trigger_assistant = r.recognize_google(audio, language="vi")
+                trigger_assistant = r.recognize_google(audio)
                 trigger_assistant = trigger_assistant.lower() # type: ignore
                 print(trigger_assistant)
-                if "minh" in trigger_assistant: 
+                if "hey" in trigger_assistant: 
                     text_to_speech("bạn cần giúp gì") 
                     record_audio()
                     username = test_model("user.wav")
-                    user_message = "None" if speech_to_text("user.wav") is None else speech_to_text("user.wav").lower() # type: ignore
+                    user_message = "None" if speech_to_text("user.wav") is None else speech_to_text("user.wav").lower()
                     os.remove("user.wav")
                 
                     print(username + ": {}".format(user_message))

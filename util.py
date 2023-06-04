@@ -74,7 +74,8 @@ def listening():
 def speech_to_text(audio):
     r = sr.Recognizer() 
 
-    with sr.AudioFile(audio) as source:                  
+    with sr.AudioFile(audio) as source:  
+        r.adjust_for_ambient_noise(source, duration=0.2)                 
         audio = r.record(source, duration=5)   
     try:
         return r.recognize_google(audio, language="vi")
