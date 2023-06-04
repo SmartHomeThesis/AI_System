@@ -165,11 +165,11 @@ class FaceRecognition:
                         dirpath, filename = os.path.split(path_name_image)
                         parts = dirpath.split("\\")  # Use backslash as separator
                         name_detected = parts[-1]  # Last part contains the name
-                        if name_detected == "Unknown" or accuracy < 50 :
+                        if name_detected == "Unknown" or accuracy < 70 :
                             print("case 1")
                             cv2.rectangle(frame, (startX, startY), (endX, endY), self.color_bgr['red'], 2)
                             cv2.putText(frame, "Unknown", (startX, endY + 23), cv2.FONT_HERSHEY_SIMPLEX, 0.9, self.color_bgr['red'], 2)
-                        elif name_detected != "Unknown" and accuracy > 50:
+                        elif name_detected != "Unknown" and accuracy > 70:
                             print("case 2")
                             cv2.rectangle(frame, (startX, startY), (endX, endY),self.color_bgr['green'], 2)
                             cv2.putText(frame,name_detected + " " + str(round(accuracy,2)) + '%', (startX, endY + 23), cv2.FONT_HERSHEY_SIMPLEX, 0.9, self.color_bgr['green'],
