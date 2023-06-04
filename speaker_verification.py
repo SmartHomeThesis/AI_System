@@ -44,10 +44,14 @@ def extract_features(audio, rate):
 def record_sample(name):
     for count in range(5):
         FORMAT = pyaudio.paInt16
-        CHANNELS = 1
+        CHANNELS = 2
         RATE = 44100
         CHUNK = 1024
+<<<<<<< HEAD
         RECORD_SECONDS = 20
+=======
+        RECORD_SECONDS = 5
+>>>>>>> e0c153d94508f4f4894e62f4109692c69995721a
         audio = pyaudio.PyAudio()		
         stream = audio.open(format=FORMAT, channels=CHANNELS, rate=RATE, input=True, input_device_index=1, frames_per_buffer=CHUNK)
 
@@ -82,7 +86,7 @@ def train_model():
     for (i, path) in enumerate(src): 
         sub_src = os.listdir('C:\\Users\\nuc\\Desktop\\Smart-Device-DT\\AI_System\\training_data\\voice\\'+path)
         for (j, sub_path) in enumerate(sub_src):
-            sr, audio = read('C:\\Users\\nuc\\Desktop\\Smart-Device-DT\\AI_System\\training_data\\voice\\'+path+'\\'+sub_path)
+            sr, audio = read('D:\Smart-Device-Controller-System\\training_data\\voice\\'+path+'\\'+sub_path)
 
             vector = extract_features(audio, sr)
             
@@ -91,13 +95,17 @@ def train_model():
             else:
                 features = np.vstack((features, vector))
 
+<<<<<<< HEAD
             if count == 5:    
                 gmm = GaussianMixture(n_components=27, max_iter=200, covariance_type='diag', n_init=3)
+=======
+            if count == 8:    
+                gmm = GaussianMixture(n_components=6, max_iter=200, covariance_type='diag', n_init=3)
+>>>>>>> e0c153d94508f4f4894e62f4109692c69995721a
                 gmm.fit(features)
-                
-                # dumping the trained gaussian model
                 picklefile = path.split("-")[0] + ".gmm"
                 pickle.dump(gmm, open(dest + picklefile, 'wb'))
+
                 print("Modelling completed for speaker:", picklefile, "with data point =", features.shape)   
                 features = np.asarray(())
                 count = 0
@@ -123,6 +131,12 @@ def test_model(audio):
         log_likelihood[i] = scores.sum()
          
     winner_score = np.max(log_likelihood)   
+<<<<<<< HEAD
+=======
+    print(winner_score)
+    if winner_score <= -26.5:
+        return "Unknown"
+>>>>>>> e0c153d94508f4f4894e62f4109692c69995721a
     winner = np.argmax(log_likelihood)
     if winner_score <= -22.5:
         return "Unknown"
@@ -136,7 +150,8 @@ def evaluate_model():
     for (i, path) in enumerate(test_data): 
         sub_src = os.listdir('D:\\Smart-Device-Controller-System\\testing_data\\voice\\'+path)
         for (j, sub_path) in enumerate(sub_src):
-            print("Data: " + path + ", Label: " + test_model('D:\\Smart-Device-Controller-System\\testing_data\\voice\\'+path+'\\'+sub_path))
+            print("Data: " + path + ", Label: " + test_model('D:\Smart-Device-Controller-System\\testing_data\\voice\\'+path+'\\'+sub_path))
+
 
 def train_model_1_person(name):
     src = os.listdir('C:\\Users\\nuc\\Desktop\\Smart-Device-DT\\AI_System\\training_data\\voice\\'+name)

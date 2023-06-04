@@ -5,7 +5,6 @@ from urllib import request, parse
 
 import random
 import requests
-import keyboard
 from Adafruit_IO import MQTTClient
 from dotenv import dotenv_values
 from authentication import FaceRecognition
@@ -78,7 +77,9 @@ def control_device(msg):
 
 
 
-def run_voice_bot():    
+def run_voice_bot():
+    text_to_speech("Cozy xin chào")
+    
     bot_message = ""
 
     while bot_message != "Tạm biệt":
@@ -123,10 +124,10 @@ def run_voice_bot():
 
                     
 def handle_AI():
-    text_to_speech("Chào mừng bạn đến với hệ thống của chúng tôi, nếu bạn đã có tài khoản xin vui lòng nhấn phím 1, nếu chưa có tài khoản, xin vui lòng nhấn phím 2")
+    while True:
+        text_to_speech("Chào mừng bạn đến với hệ thống của chúng tôi. Nếu bạn đã có tài khoản, xin vui lòng nhấn phím 1, nếu chưa có tài khoản, xin vui lòng nhấn phím 2.")
 
-    while True: 
-        if int(input()) == 1:
+        if keyboard.read_key() == "1":
             # # Face Recognition
             # fr = FaceRecognition()
             # authentication, name = fr.run_recognition()
@@ -134,15 +135,13 @@ def handle_AI():
             #     client.publish("smart-home.face-recognition", name) 
             #     client.publish("smart-home.door", 1) 
             while True:
-                text_to_speech("Hệ thống xác thực khuôn mặt thành công Nếu muốn sử dụng trợ lý ảo xin vui lòng nhấn phím 1")
-                if int(input()) == 1:
+                text_to_speech("Hệ thống xác thực khuôn mặt thành công. Nếu muốn sử dụng trợ lý ảo, xin vui lòng nhấn phím 1")
+                if keyboard.read_key() == "1":
                     run_voice_bot()
                 else:
                     break
-        elif int(input()) == 2:
-            email = input("Enter your email: ")
-            password = input("Enter your password: ")
-            data = parse.urlencode({"email": email, "password": password}).encode()
+        elif keyboard.read_key() == "2":
+            name = input("Enter your name: ")
 
             login = request.Request(f"{domain}/api/utils/login", data=data)
             response = json.loads(request.urlopen(login).read())
@@ -163,8 +162,4 @@ def handle_AI():
 
 
 if __name__ == '__main__':
-    # handle_AI()
-    run_voice_bot()
-
-
-    
+    handle_AI()

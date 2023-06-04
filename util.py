@@ -1,7 +1,8 @@
 import os
 import time
 import wave
-import playsound
+from playsound import playsound
+import pyttsx3
 
 import pyaudio
 import serial.tools.list_ports
@@ -37,16 +38,16 @@ def record_audio():
     filename = "user.wav"
     chunk = 1024
     FORMAT = pyaudio.paInt16
-    channels = 1
+    channels = 2
     sample_rate = 44100
     record_seconds = 5
     micro_index = 1 
     p = pyaudio.PyAudio()
     # open stream object as input & output
-    stream = p.open(format=FORMAT, channels=channels, rate=sample_rate, input=True, frames_per_buffer=chunk, input_device_index=1)
+    stream = p.open(format=FORMAT, channels=channels, rate=sample_rate, input=True, frames_per_buffer=chunk, input_device_index=micro_index)
     frames = []
 
-    print("SPEAKING")
+    text_to_speech("Bạn cần giúp gì")
     for i in range(0, int(sample_rate / chunk * record_seconds)):
         data = stream.read(chunk)
         frames.append(data)
@@ -83,9 +84,9 @@ def speech_to_text(audio):
         return None
 
 def text_to_speech(msg):
-    audio = gTTS(msg, lang="vi")
+    audio = gTTS(msg, lang="vi", slow=False)
     audio.save("audio.mp3")
-    playsound.playsound("audio.mp3")
+    playsound("audio.mp3")
     os.remove("audio.mp3")
 
 relay1_ON  = [15, 6, 0, 0, 0, 255, 200, 164]
