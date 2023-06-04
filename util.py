@@ -47,6 +47,7 @@ def record_audio():
     stream = p.open(format=FORMAT, channels=channels, rate=sample_rate, input=True, frames_per_buffer=chunk)
     frames = []
 
+    text_to_speech("Bạn cần giúp gì")
     for i in range(0, int(sample_rate / chunk * record_seconds)):
         data = stream.read(chunk)
         frames.append(data)
@@ -61,11 +62,21 @@ def record_audio():
     wf.writeframes(b"".join(frames))
     wf.close()
 
+def listening():
+    r = sr.Recognizer() 
+
+    with sr.Microphone() as source:                  
+        audio = r.record(source, duration=2)   
+    try:
+        return r.recognize_google(audio, language="vi")
+    except sr.UnknownValueError or sr.RequestError:
+        return None
+
 def speech_to_text(audio):
     r = sr.Recognizer() 
-                                                                        
+
     with sr.AudioFile(audio) as source:                  
-        audio = r.record(source, duration=3)   
+        audio = r.record(source, duration=5)   
     try:
         return r.recognize_google(audio, language="vi")
     except sr.UnknownValueError or sr.RequestError:
@@ -92,28 +103,3 @@ def setDevice2(state, ser):
         ser.write(relay2_ON)
     else:
         ser.write(relay2_OFF)
-
-def listening():
-    r = sr.Recognizer() 
-    
-    with sr.Microphone() as mic:
-        r.adjust_for_ambient_noise(mic)
-        audio = r.listen(mic)
-    try:
-        return r.recognize_google(audio, language="vi")
-    except sr.UnknownValueError or sr.RequestError:
-        return None
-
-def getaudiodevices():
-    p = pyaudio.PyAudio()
-    for i in range(p.get_device_count()):
-        print(p.get_device_info_by_index(i).get('name'))   
-
-def text_to_speech_2():
-    engine = pyttsx3.init()
-    voices = engine.getProperty('voices')
-    for voice in voices:
-        engine.setProperty('voice', voice.id)
-        engine.say('Xin chào')
-    engine.runAndWait()
-
