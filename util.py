@@ -1,7 +1,8 @@
 import os
 import time
 import wave
-import playsound
+from playsound import playsound
+import pyttsx3
 
 import pyaudio
 import serial.tools.list_ports
@@ -37,7 +38,7 @@ def record_audio():
     filename = "user.wav"
     chunk = 1024
     FORMAT = pyaudio.paInt16
-    channels = 1
+    channels = 2
     sample_rate = 44100
     record_seconds = 5
     micro_index = 1 
@@ -60,20 +61,31 @@ def record_audio():
     wf.writeframes(b"".join(frames))
     wf.close()
 
+def listening():
+    r = sr.Recognizer() 
+
+    with sr.Microphone() as source:                  
+        audio = r.record(source, duration=2)   
+    try:
+        return r.recognize_google(audio, language="vi")
+    except sr.UnknownValueError or sr.RequestError:
+        return None
+
 def speech_to_text(audio):
     r = sr.Recognizer() 
-                                                                        
-    with sr.AudioFile(audio) as source:                  
-        audio = r.record(source, duration=3)   
+
+    with sr.AudioFile(audio) as source:  
+        r.adjust_for_ambient_noise(source, duration=0.2)                 
+        audio = r.record(source, duration=5)   
     try:
         return r.recognize_google(audio, language="vi")
     except sr.UnknownValueError or sr.RequestError:
         return None
 
 def text_to_speech(msg):
-    audio = gTTS(msg, lang="vi")
+    audio = gTTS(msg, lang="vi", slow=False)
     audio.save("audio.mp3")
-    playsound.playsound("audio.mp3")
+    playsound("audio.mp3")
     os.remove("audio.mp3")
 
 relay1_ON  = [15, 6, 0, 0, 0, 255, 200, 164]

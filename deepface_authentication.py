@@ -136,6 +136,7 @@ class FaceRecognition:
             fps = 1 / (new_frame_time - prev_frame_time)
             prev_frame_time = new_frame_time
             name_detected = "Unknown"
+            accuracy = 0
             # Only process every other frame of video to save time
             # Display the FPS on the frame
             cv2.putText(frame, "FPS: {:.2f}".format(fps), (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
@@ -145,7 +146,6 @@ class FaceRecognition:
                                            "models/face/res10_300x300_ssd_iter_140000.caffemodel")
             net.setInput(blob)
             detections = net.forward()
-
             for i in range(0, detections.shape[2]):
                 confidence = detections[0, 0, i, 2]
                 if confidence > 0.5:
