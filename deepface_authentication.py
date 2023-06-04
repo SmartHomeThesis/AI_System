@@ -121,15 +121,17 @@ class FaceRecognition:
         cv2.destroyAllWindows()
 
     def train_model(self):
-        if os.path.exists('training_data/face/representations_deepface.pkl'):
-            os.remove('training_data/face/representations_deepface.pkl')
+        if os.path.exists('training_data/face/representations_facenet.pkl'):
+            os.remove('training_data/face/representations_facenet.pkl')
         DeepFace.find(img_path="faces/test/Nam.png", db_path="training_data/face", model_name=self.models['default'], distance_metric=self.metrics['default'], detector_backend=self.detectors['default'], enforce_detection=False)
         print("Training completed")
 
     def run_recognition(self):
-        cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)  # video capture source camera (Here webcam of laptop)
-        # cap = cv2.VideoCapture(0, cv2.CAP_DSHOW) # Using in NUC
+        # cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)  # video capture source camera (Here webcam of laptop)
+        cap = cv2.VideoCapture(0, cv2.CAP_DSHOW) # Using in NUC
         prev_frame_time = 0
+        count_detect_true = 0
+        print("run recognition")
         while (True):
             ret, frame = cap.read()
             new_frame_time = time.time()
@@ -165,14 +167,14 @@ class FaceRecognition:
                         dirpath, filename = os.path.split(path_name_image)
                         parts = dirpath.split("\\")  # Use backslash as separator
                         name_detected = parts[-1]  # Last part contains the name
-                        if name_detected == "Unknown" or accuracy < 70 :
+                        if name_detected == "Unknown" or accuracy < 50 :
                             print("case 1")
                             cv2.rectangle(frame, (startX, startY), (endX, endY), self.color_bgr['red'], 2)
                             cv2.putText(frame, "Unknown", (startX, endY + 23), cv2.FONT_HERSHEY_SIMPLEX, 0.9, self.color_bgr['red'], 2)
-                        elif name_detected != "Unknown" and accuracy > 70:
+                        elif name_detected != "Unknown" and accuracy > 50:
                             print("case 2")
                             cv2.rectangle(frame, (startX, startY), (endX, endY),self.color_bgr['green'], 2)
-                            cv2.putText(frame,name_detected + " " + str(round(accuracy,2)) + '%', (startX, endY + 23), cv2.FONT_HERSHEY_SIMPLEX, 0.9, self.color_bgr['green'],
+                            cv2.putText(frame,name_detected, (startX, endY + 23), cv2.FONT_HERSHEY_SIMPLEX, 0.9, self.color_bgr['green'],
                                      2)
                     elif name_detected == "Unknown" or accuracy < 50 :
                         print("case 3")
@@ -182,31 +184,19 @@ class FaceRecognition:
                         print("case 4")
                         cv2.rectangle(frame, (startX, startY), (endX, endY),self.color_bgr['green'], 2)
                     print("NAME_Dectect", name_detected, accuracy)
+                    if accuracy > 50:
+                        count_detect_true +=1
+                    else:
+                        count_detect_true = 0
+                    
             cv2.imshow("Face", frame)
+            if(count_detect_true > 5):
+                print(name_detected)
+                return True, name_detected
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 print("Closing program ................")
                 break
         cv2.destroyAllWindows()
         cap.release()
-
-
-fr = FaceRecognition()
-while True:
-    print("*************************************************************************")
-    print("*                            WELCOME TO COZY                            *")
-    print("* 1. Take picture and train models                                                              *")
-    print("* 2. Face Recognition                                      *")
-    print("*************************************************************************\n")
-    user_choice = int(input())
-    if (user_choice == 1):
-        name = input("Enter your name: ")
-        fr.take_picture(name)
-        print("Training DeepFace...")
-        fr.train_model()
-    if (user_choice == 2):
-        fr.run_recognition()
-    if (user_choice == 3):
-        fr.train_model()
-    else:
-        print("Please enter again!")
-#
+# fr = FaceRecognition()
+# authentication, name = fr.run_recognition()

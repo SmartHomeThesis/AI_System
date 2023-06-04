@@ -44,16 +44,12 @@ def extract_features(audio, rate):
 def record_sample(name):
     for count in range(5):
         FORMAT = pyaudio.paInt16
-        CHANNELS = 2
+        CHANNELS = 1
         RATE = 44100
         CHUNK = 1024
-<<<<<<< HEAD
         RECORD_SECONDS = 20
-=======
-        RECORD_SECONDS = 5
->>>>>>> e0c153d94508f4f4894e62f4109692c69995721a
         audio = pyaudio.PyAudio()		
-        stream = audio.open(format=FORMAT, channels=CHANNELS, rate=RATE, input=True, input_device_index=1, frames_per_buffer=CHUNK)
+        stream = audio.open(format=FORMAT, channels=CHANNELS, rate=RATE, input=True, input_device_index=2, frames_per_buffer=CHUNK)
 
         Recordframes = []
         print("----------------------Recording " + f"{count+1}---------------------")
@@ -95,13 +91,8 @@ def train_model():
             else:
                 features = np.vstack((features, vector))
 
-<<<<<<< HEAD
-            if count == 5:    
-                gmm = GaussianMixture(n_components=27, max_iter=200, covariance_type='diag', n_init=3)
-=======
-            if count == 8:    
-                gmm = GaussianMixture(n_components=6, max_iter=200, covariance_type='diag', n_init=3)
->>>>>>> e0c153d94508f4f4894e62f4109692c69995721a
+            if count == 22:    
+                gmm = GaussianMixture(n_components=22, max_iter=200, covariance_type='diag', n_init=3)
                 gmm.fit(features)
                 picklefile = path.split("-")[0] + ".gmm"
                 pickle.dump(gmm, open(dest + picklefile, 'wb'))
@@ -131,16 +122,10 @@ def test_model(audio):
         log_likelihood[i] = scores.sum()
          
     winner_score = np.max(log_likelihood)   
-<<<<<<< HEAD
-=======
-    print(winner_score)
-    if winner_score <= -26.5:
-        return "Unknown"
->>>>>>> e0c153d94508f4f4894e62f4109692c69995721a
     winner = np.argmax(log_likelihood)
-    if winner_score <= -22.5:
-        return "Unknown"
     winner_name = speakers[winner][13:]
+    if winner_score <= -21.5:
+        winner_name = "Unknown"
     print(winner_name, winner_score, winner, log_likelihood)
     return winner_name
 
@@ -183,13 +168,18 @@ def train_model_1_person(name):
 
         count += 1
 
-# record_sample("Hanh")
-# train_model_1_person("Hanh")
+# record_sample("Nam")
+# train_model_1_person("Nam")
 
-while True:
-    record_audio()
-    username = test_model("user.wav")
-    user_message = "None" if speech_to_text("user.wav") is None else speech_to_text("user.wav").lower() # type: ignore
-    os.remove("user.wav")
+# while True:
+#     record_audio()
+#     username = test_model("user.wav")
+#     user_message = "None" if speech_to_text("user.wav") is None else speech_to_text("user.wav").lower() # type: ignore
+#     os.remove("user.wav")
 
-    print(username + ": {}".format(user_message))
+#     print(username + ": {}".format(user_message))
+
+# p = pyaudio.PyAudio()
+# for i in range(p.get_device_count()):
+#   dev = p.get_device_info_by_index(i)
+#   print((i,dev['name'],dev['maxInputChannels']))    
