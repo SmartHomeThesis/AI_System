@@ -43,7 +43,7 @@ def record_audio():
     micro_index = 1 
     p = pyaudio.PyAudio()
     # open stream object as input & output
-    stream = p.open(format=FORMAT, channels=channels, rate=sample_rate, input=True, frames_per_buffer=chunk, input_device_index=micro_index)
+    stream = p.open(format=FORMAT, channels=channels, rate=sample_rate, input=True, frames_per_buffer=chunk, input_device_index=1)
     frames = []
 
     print("SPEAKING")
