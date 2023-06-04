@@ -1,7 +1,8 @@
 import os
 import time
 import wave
-import playsound
+from playsound import playsound
+import pyttsx3
 
 import pyaudio
 import serial.tools.list_ports
@@ -37,16 +38,15 @@ def record_audio():
     filename = "user.wav"
     chunk = 1024
     FORMAT = pyaudio.paInt16
-    channels = 1
+    channels = 2
     sample_rate = 44100
-    record_seconds = 3
+    record_seconds = 5
     micro_index = 1 
     p = pyaudio.PyAudio()
     # open stream object as input & output
-    stream = p.open(format=FORMAT, channels=channels, rate=sample_rate, input=True, frames_per_buffer=chunk, input_device_index=micro_index)
+    stream = p.open(format=FORMAT, channels=channels, rate=sample_rate, input=True, frames_per_buffer=chunk)
     frames = []
 
-    text_to_speech("Bạn cần giúp gì")
     for i in range(0, int(sample_rate / chunk * record_seconds)):
         data = stream.read(chunk)
         frames.append(data)
@@ -72,9 +72,9 @@ def speech_to_text(audio):
         return None
 
 def text_to_speech(msg):
-    audio = gTTS(msg, lang="vi")
+    audio = gTTS(msg, lang="vi", slow=False)
     audio.save("audio.mp3")
-    playsound.playsound("audio.mp3")
+    playsound("audio.mp3")
     os.remove("audio.mp3")
 
 relay1_ON  = [15, 6, 0, 0, 0, 255, 200, 164]
@@ -92,3 +92,28 @@ def setDevice2(state, ser):
         ser.write(relay2_ON)
     else:
         ser.write(relay2_OFF)
+
+def listening():
+    r = sr.Recognizer() 
+    
+    with sr.Microphone() as mic:
+        r.adjust_for_ambient_noise(mic)
+        audio = r.listen(mic)
+    try:
+        return r.recognize_google(audio, language="vi")
+    except sr.UnknownValueError or sr.RequestError:
+        return None
+
+def getaudiodevices():
+    p = pyaudio.PyAudio()
+    for i in range(p.get_device_count()):
+        print(p.get_device_info_by_index(i).get('name'))   
+
+def text_to_speech_2():
+    engine = pyttsx3.init()
+    voices = engine.getProperty('voices')
+    for voice in voices:
+        engine.setProperty('voice', voice.id)
+        engine.say('Xin chào')
+    engine.runAndWait()
+

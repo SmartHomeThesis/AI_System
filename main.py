@@ -5,7 +5,6 @@ import urllib.request
 
 
 import requests
-import keyboard
 from Adafruit_IO import MQTTClient
 from dotenv import dotenv_values
 from authentication import FaceRecognition
@@ -78,7 +77,7 @@ def control_device(msg):
 
 
 def run_voice_bot():
-    text_to_speech("Cozy xin chào")
+    # text_to_speech("Cozy xin chào")
     
     bot_message = ""
     while bot_message != "Tạm biệt":
@@ -115,7 +114,7 @@ def handle_AI():
     while True:
         text_to_speech("Chào mừng bạn đến với hệ thống của chúng tôi. Nếu bạn đã có tài khoản, xin vui lòng nhấn phím 1, nếu chưa có tài khoản, xin vui lòng nhấn phím 2.")
 
-        if keyboard.read_key() == "1":
+        if int(input()) == 1:
             # # Face Recognition
             # fr = FaceRecognition()
             # authentication, name = fr.run_recognition()
@@ -124,11 +123,11 @@ def handle_AI():
             #     client.publish("smart-home.door", 1) 
             while True:
                 text_to_speech("Hệ thống xác thực khuôn mặt thành công. Nếu muốn sử dụng trợ lý ảo, xin vui lòng nhấn phím 1")
-                if keyboard.read_key() == "1":
+                if int(input()) == 1:
                     run_voice_bot()
                 else:
                     break
-        elif keyboard.read_key() == "2":
+        elif int(input()) == 2:
             name = input("Enter your name: ")
 
             # # Face flow
@@ -151,4 +150,4 @@ def handle_AI():
 
 
 if __name__ == '__main__':
-    handle_AI()
+    run_voice_bot()
