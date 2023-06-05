@@ -17,6 +17,9 @@ Developing the smart home system was a challenging but rewarding process. One of
 2. source .venv/bin/activate
 3. pip3 install -r requirements
 4. ./run.sh
+5. cd voice_bot && rasa run -m models -p 5005
+6.  rasa run actions
+
 
 ## Conclusion
 We hope that our smart home system will make your life easier and more convenient. With the ability to control and monitor your home using face recognition and a voice assistant, you can feel confident that your home is secure and your needs are met.
